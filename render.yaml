@@ -1,0 +1,67 @@
+services:
+  - type: web
+    name: primeconnector
+    runtime: node
+    plan: starter
+    region: singapore # or oregon / frankfurt
+    buildCommand: npm install && npm run db:generate && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /portal/login
+    autoDeploy: true
+    domains:
+      - primeconnector.primewebtech.online
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SERVER_NAME
+        value: PrimeConnector
+      - key: SERVER_TYPE
+        value: http
+      - key: SERVER_URL
+        value: https://primeconnector.primewebtech.online
+      - key: CONFIG_SESSION_PHONE_CLIENT
+        value: PrimeConnector
+      - key: CONFIG_SESSION_PHONE_NAME
+        value: Chrome
+      - key: DATABASE_PROVIDER
+        value: postgresql
+      - key: DATABASE_CONNECTION_URI
+        sync: false # Set in Render Dashboard or will use default
+      - key: DATABASE_CONNECTION_CLIENT_NAME
+        value: evolution_exchange
+      - key: DATABASE_SAVE_DATA_INSTANCE
+        value: "true"
+      - key: DATABASE_SAVE_DATA_NEW_MESSAGE
+        value: "false"
+      - key: DATABASE_SAVE_MESSAGE_UPDATE
+        value: "false"
+      - key: DATABASE_SAVE_DATA_CONTACTS
+        value: "false"
+      - key: DATABASE_SAVE_DATA_CHATS
+        value: "false"
+      - key: DATABASE_SAVE_DATA_HISTORIC
+        value: "false"
+      - key: DATABASE_SAVE_IS_ON_WHATSAPP
+        value: "false"
+      - key: DATABASE_DELETE_MESSAGE
+        value: "false"
+      - key: AUTHENTICATION_API_KEY
+        sync: false
+      - key: AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES
+        value: "true"
+      - key: LOG_LEVEL
+        value: ERROR,WARN
+      - key: LOG_BAILEYS
+        value: error
+      - key: CACHE_LOCAL_ENABLED
+        value: "true"
+      - key: CACHE_REDIS_ENABLED
+        value: "false"
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: CORS_METHODS
+        value: GET,POST,PUT,DELETE
+      - key: CORS_CREDENTIALS
+        value: "true"
+      - key: LANGUAGE
+        value: en

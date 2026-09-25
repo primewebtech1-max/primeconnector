@@ -119,10 +119,10 @@ alwaysApply: true
 ## Development Constraints
 
 ### Language Requirements
-- **USER COMMUNICATION**: Always respond in Portuguese (PT-BR)
+- **USER COMMUNICATION**: Always respond in English
 - **CODE/COMMENTS**: English for code and technical documentation
 - **API RESPONSES**: English for consistency
-- **ERROR MESSAGES**: Portuguese for user-facing errors
+- **ERROR MESSAGES**: English for user-facing errors
 
 ### Performance Constraints
 - **MEMORY**: Efficient memory usage for multiple instances

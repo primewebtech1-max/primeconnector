@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - PrimeConnector | PrimeWebTech</title>
+  <link rel="icon" type="image/png" href="/portal/assets/primeconnector-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #f1f5f9;
+      --card-bg: #ffffff;
+      --left-panel-bg: linear-gradient(145deg, #f8fbff 0%, #edf4fe 50%, #f1f7fd 100%);
+      
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-dark: #047857;
+      --primary-glow: rgba(16, 185, 129, 0.16);
+      
+      --brand-navy: #0b2545;
+      --brand-gold: #c99313;
+      --brand-gold-glow: rgba(201, 147, 19, 0.15);
+
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+      --input-focus: #10b981;
+      
+      --card-border: rgba(226, 232, 240, 0.9);
+      --card-shadow: 
+        0 4px 6px -1px rgba(15, 23, 42, 0.03),
+        0 20px 30px -10px rgba(15, 23, 42, 0.08),
+        0 0 0 1px rgba(226, 232, 240, 0.6);
+      
+      --error-bg: #fef2f2;
+      --error-border: #fecaca;
+      --error-text: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(201, 147, 19, 0.05) 0px, transparent 40%),
+        radial-gradient(at 90% 15%, rgba(16, 185, 129, 0.06) 0px, transparent 45%),
+        radial-gradient(at 50% 90%, rgba(11, 37, 69, 0.04) 0px, transparent 50%),
+        linear-gradient(to bottom, #ffffff 0%, #f1f5f9 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient geometric background lines */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(226, 232, 240, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.4) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 75% 65% at 50% 50%, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 50%, #000 30%, transparent 80%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+      z-index: 10;
+      animation: fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Outer Split Card */
+    .split-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      box-shadow: var(--card-shadow);
+      display: grid;
+      grid-template-columns: 1.05fr 1.15fr;
+      overflow: hidden;
+      min-height: 560px;
+      position: relative;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .split-card:hover {
+      box-shadow: 
+        0 8px 12px -2px rgba(15, 23, 42, 0.04),
+        0 25px 40px -10px rgba(15, 23, 42, 0.1),
+        0 0 0 1px rgba(203, 213, 225, 0.8);
+    }
+
+    /* ---------------------------------------------------- */
+    /* LEFT PANEL: PrimeWebTech Brand & Feature Showcase    */
+    /* ---------------------------------------------------- */
+    .brand-panel {
+      background: var(--left-panel-bg);
+      border-right: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 44px 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle background graphic circles */
+    .brand-panel::before {
+      content: '';
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(201, 147, 19, 0.09) 0%, rgba(201, 147, 19, 0) 70%);
+      top: -80px;
+      right: -80px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .brand-panel::after {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0) 70%);
+      bottom: -60px;
+      left: -60px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .brand-top {
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-logo-card {
+      background: #ffffff;
+      padding: 22px 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.05), 0 2px 6px rgba(15, 23, 42, 0.03);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .brand-logo-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.08);
+    }
+
+    .brand-logo-img {
+      width: 130px;
+      height: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(201, 147, 19, 0.18));
+      margin-bottom: 8px;
+    }
+
+    .company-title-text {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: var(--brand-navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .company-title-text .gold {
+      color: var(--brand-gold);
+    }
+
+    .company-tagline {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Feature highlights inside left panel */
+    .brand-features {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.7);
+      transition: all 0.2s ease;
+    }
+
+    .feature-item:hover {
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 1);
+      transform: translateX(3px);
+    }
+
+    .feature-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+      border: 1px solid #e2e8f0;
+      color: var(--primary);
+    }
+
+    .feature-icon-badge svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .feature-text h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .feature-text p {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .brand-bottom {
+      position: relative;
+      z-index: 2;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px dashed rgba(203, 213, 225, 0.8);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-bottom .version {
+      background: #e2e8f0;
+      color: #475569;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+    }
+
+    /* ---------------------------------------------------- */
+    /* RIGHT PANEL: Modern Clean Login Form                 */
+    /* ---------------------------------------------------- */
+    .form-panel {
+      padding: 48px 42px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .form-header {
+      margin-bottom: 28px;
+    }
+
+    .form-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .form-pill .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+
+    .form-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-light);
+      pointer-events: none;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      padding: 12px 16px 12px 42px;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
+    }
+
+    .form-input::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .form-input:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+    }
+
+    .form-input:focus {
+      background: #ffffff;
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 4px var(--primary-glow), inset 0 1px 2px rgba(15, 23, 42, 0.01);
+    }
+
+    .input-wrapper:focus-within .input-icon {
+      color: var(--primary);
+    }
+
+    .toggle-pwd-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .toggle-pwd-btn:hover {
+      color: var(--text-secondary);
+      background-color: #f1f5f9;
+    }
+
+    .toggle-pwd-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.35), 0 2px 4px rgba(16, 185, 129, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      transition: 0.5s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px -2px rgba(16, 185, 129, 0.42), 0 4px 8px -1px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-submit:hover::after {
+      left: 100%;
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Alert Banner */
+    .alert {
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      animation: shake 0.4s ease;
+      line-height: 1.4;
+    }
+
+    .alert-error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+    }
+
+    .alert-icon {
+      flex-shrink: 0;
+      width: 17px;
+      height: 17px;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    /* Spinner */
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top: 2px solid #ffffff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .form-footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    /* ---------------------------------------------------- */
+    /* RESPONSIVE LAYOUT (Mobile & Tablet)                  */
+    /* ---------------------------------------------------- */
+    @media (max-width: 820px) {
+      .split-card {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .brand-panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        padding: 32px 24px;
+      }
+
+      .brand-logo-img {
+        width: 100px;
+        height: 100px;
+      }
+
+      .brand-features {
+        display: none;
+      }
+
+      .brand-bottom {
+        display: none;
+      }
+
+      .form-panel {
+        padding: 36px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <div class="split-card">
+      
+      <!-- LEFT PANEL: PrimeWebTech Brand & System Identity -->
+      <div class="brand-panel">
+        <div class="brand-top">
+          
+          <div class="brand-logo-card">
+            <img src="/portal/assets/primeconnector-logo.png" alt="PrimeConnector Logo" class="brand-logo-img">
+            <div class="company-title-text">
+              <span class="gold">PRIME</span>
+              <span>CONNECTOR</span>
+            </div>
+            <div class="company-tagline">Enterprise WhatsApp Gateway &bull; PrimeWebTech</div>
+          </div>
+
+          <div class="brand-features">
+            <div class="feature-item">
+              <div class="feature-icon-badge">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h4>Isolated Tenant Gateway</h4>
+                <p>Dedicated WhatsApp instance container</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon-badge">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h4>Live Sync & Instant QR</h4>
+                <p>Fast pairing code and auto reconnection</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon-badge">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h4>Enterprise Grade API</h4>
+                <p>Secure webhooks & AI bot automation</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="brand-bottom">
+          <span>primeconnector.primewebtech.online</span>
+          <span class="version">v2.3 Production</span>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Clean Login Form -->
+      <div class="form-panel">
+        <div class="form-header">
+          <div class="form-pill">
+            <span class="pill-dot"></span>
+            <span>Client Authentication</span>
+          </div>
+          <h1 class="form-title">Welcome Back</h1>
+          <p class="form-subtitle">Log in to control and monitor your WhatsApp instance</p>
+        </div>
+
+        <div id="alertBox" class="alert alert-error">
+          <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <span id="alertMessage"></span>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="email">Email Address</label>
+            </div>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+              </div>
+              <input type="email" id="email" class="form-input" placeholder="user@primewebtech.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="password">Password</label>
+            </div>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <input type="password" id="password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+              <button type="button" id="togglePasswordBtn" class="toggle-pwd-btn" aria-label="Toggle password visibility">
+                <svg id="eyeIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmit" class="btn-submit">
+            <span>Sign In to Instance</span>
+            <svg style="width: 17px; height: 17px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <span>&copy; 2026 PrimeWebTech &bull; All Rights Reserved</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Check if user is already logged in
+    const existingToken = localStorage.getItem('evolution_portal_token');
+    if (existingToken) {
+      window.location.href = '/portal/dashboard';
+    }
+
+    const form = document.getElementById('loginForm');
+    const alertBox = document.getElementById('alertBox');
+    const alertMessage = document.getElementById('alertMessage');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    // Password visibility toggle
+    let showPassword = false;
+    togglePasswordBtn.addEventListener('click', () => {
+      showPassword = !showPassword;
+      passwordInput.type = showPassword ? 'text' : 'password';
+      eyeIcon.innerHTML = showPassword 
+        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />`
+        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.style.display = 'none';
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alertMessage.textContent = 'Please enter both email and password.';
+        alertBox.style.display = 'flex';
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<div class="spinner"></div><span>Authenticating...</span>';
+
+      try {
+        const response = await fetch('/portal/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Invalid email or password');
+        }
+
+        // Store session token and user info
+        localStorage.setItem('evolution_portal_token', data.token);
+        localStorage.setItem('evolution_portal_user', JSON.stringify(data.user));
+
+        // Redirect to dashboard
+        window.location.href = '/portal/dashboard';
+      } catch (err) {
+        alertMessage.textContent = err.message || 'Login failed. Please check credentials.';
+        alertBox.style.display = 'flex';
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<span>Sign In to Instance</span>
+          <svg style="width: 17px; height: 17px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>`;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -13,12 +13,14 @@ import fs from 'fs';
 import mimeTypes from 'mime-types';
 import path from 'path';
 
+import { AdminUserRouter } from './admin.user.router';
 import { BusinessRouter } from './business.router';
 import { CallRouter } from './call.router';
 import { ChatRouter } from './chat.router';
 import { GroupRouter } from './group.router';
 import { InstanceRouter } from './instance.router';
 import { LabelRouter } from './label.router';
+import { PortalRouter } from './portal.router';
 import { ProxyRouter } from './proxy.router';
 import { MessageRouter } from './sendMessage.router';
 import { SettingsRouter } from './settings.router';
@@ -214,6 +216,8 @@ router
       facebookUserToken: facebookConfig.USER_TOKEN,
     });
   })
+  .use('/admin/users', new AdminUserRouter(authGuard['apikey']).router)
+  .use('/portal', new PortalRouter().router)
   .use('/instance', new InstanceRouter(configService, ...guards).router)
   .use('/message', new MessageRouter(...guards).router)
   .use('/call', new CallRouter(...guards).router)
