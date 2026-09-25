@@ -736,7 +736,7 @@
     // Check if user is already logged in
     const existingToken = localStorage.getItem('evolution_portal_token');
     if (existingToken) {
-      window.location.href = '/portal/dashboard';
+      window.location.replace('/portal/dashboard');
     }
 
     const form = document.getElementById('loginForm');

@@ -196,6 +196,10 @@ router
   .use((req, res, next) => telemetry.collectTelemetry(req, res, next))
 
   .get('/', async (req, res) => {
+    if (req.headers.accept?.includes('text/html') || req.accepts(['html', 'json']) === 'html') {
+      return res.redirect('/portal/login');
+    }
+
     res.status(HttpStatus.OK).json({
       status: HttpStatus.OK,
       message: 'Welcome to the Evolution API, it is working!',
