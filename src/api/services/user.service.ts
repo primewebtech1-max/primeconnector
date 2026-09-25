@@ -282,7 +282,10 @@ export class UserService {
     }
 
     // Sanitize instance name (lowercase alphanumeric and hyphens/underscores)
-    let cleanName = (instanceData.instanceName || `${user.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_${Date.now().toString().slice(-4)}`)
+    let cleanName = (
+      instanceData.instanceName ||
+      `${user.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_${Date.now().toString().slice(-4)}`
+    )
       .toLowerCase()
       .replace(/\s+/g, '_');
 
@@ -295,7 +298,8 @@ export class UserService {
     instanceData.instanceName = cleanName;
     if (instanceData.integration) {
       const normalized = instanceData.integration.toUpperCase().replace('_', '-');
-      instanceData.integration = normalized === 'WHATSAPP-BAILEYS' ? Integration.WHATSAPP_BAILEYS : instanceData.integration;
+      instanceData.integration =
+        normalized === 'WHATSAPP-BAILEYS' ? Integration.WHATSAPP_BAILEYS : instanceData.integration;
     } else {
       instanceData.integration = Integration.WHATSAPP_BAILEYS;
     }
