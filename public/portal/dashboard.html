@@ -1076,6 +1076,13 @@
             <span>Pairing Code</span>
           </a>
 
+          <a class="nav-link" id="tabSendMessageBtn">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+            <span>Send Message</span>
+          </a>
+
           <a class="nav-link" id="tabProfileSettingsBtn">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -1143,6 +1150,7 @@
             <button class="mode-tab-btn active" id="tabModeSummary">SUMMARY</button>
             <button class="mode-tab-btn" id="tabModeQr">QR CODE</button>
             <button class="mode-tab-btn" id="tabModePairing">PAIRING CODE</button>
+            <button class="mode-tab-btn" id="tabModeSendMsg">SEND MESSAGE</button>
           </div>
           
           <!-- Settings Sub-Tabs -->
@@ -1318,6 +1326,52 @@
                 <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">8-Digit Link Code:</span>
                 <span id="pairingCodeValue" class="pairing-digits">--------</span>
                 <button id="btnCopyCode" class="btn-gold-search" style="padding: 5px 12px; font-size: 11px; margin-top: 4px;">Copy Code</button>
+              </div>
+            </div>
+
+            <!-- View 4: Send Message Test Studio -->
+            <div id="viewSendMessage" class="hidden">
+              <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                  <div style="font-size: 13.5px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 28px; height: 28px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                      <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    </span>
+                    <span>Quick WhatsApp Messenger</span>
+                  </div>
+                  <span id="quickSendStatusPill" style="font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.12); color: var(--primary);">READY</span>
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                  <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px;">
+                    Recipient Phone Number (with Country Code)
+                  </label>
+                  <input type="text" id="quickMsgPhone" class="modern-input" placeholder="e.g. 917276815079 (Country Code + Number)" style="width: 100%;">
+                  <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Include full country code without '+' sign (e.g. 91 for India, 1 for USA)</span>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                  <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px;">
+                    Message Content
+                  </label>
+                  <textarea id="quickMsgText" class="modern-input" rows="3" placeholder="Enter your text message here... (e.g. absent today)" style="width: 100%; resize: vertical; min-height: 80px;"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <button id="btnSendQuickMsg" class="btn-deck btn-deck-primary" style="width: auto; padding: 10px 24px;">
+                    <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    <span>Send Message</span>
+                  </button>
+                  <button id="btnClearQuickMsg" class="btn-deck btn-deck-secondary" style="width: auto; padding: 10px 16px; color: var(--text-muted);">
+                    <span>Clear</span>
+                  </button>
+                </div>
+
+                <div id="quickMsgResultBox" class="hidden" style="margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-size: 12px; line-height: 1.5;"></div>
               </div>
             </div>
 
@@ -1616,6 +1670,7 @@
     const tabModeSummary = document.getElementById('tabModeSummary');
     const tabModeQr = document.getElementById('tabModeQr');
     const tabModePairing = document.getElementById('tabModePairing');
+    const tabModeSendMsg = document.getElementById('tabModeSendMsg');
     const topModeTabsBar = document.getElementById('topModeTabsBar');
     const topSettingsTabsBar = document.getElementById('topSettingsTabsBar');
     const btnSubTabProfile = document.getElementById('btnSubTabProfile');
@@ -1624,11 +1679,13 @@
     const viewSummary = document.getElementById('viewSummary');
     const viewQr = document.getElementById('viewQr');
     const viewPairing = document.getElementById('viewPairing');
+    const viewSendMessage = document.getElementById('viewSendMessage');
     const viewModeTitle = document.getElementById('viewModeTitle');
 
     const tabInstanceBtn = document.getElementById('tabInstanceBtn');
     const tabQrBtn = document.getElementById('tabQrBtn');
     const tabPairBtn = document.getElementById('tabPairBtn');
+    const tabSendMessageBtn = document.getElementById('tabSendMessageBtn');
     const tabProfileSettingsBtn = document.getElementById('tabProfileSettingsBtn');
     const tabPasswordSettingsBtn = document.getElementById('tabPasswordSettingsBtn');
     const sidebarAvatarBtn = document.getElementById('sidebarAvatarBtn');
@@ -1661,7 +1718,7 @@
 
     function setActiveNav(tab) {
       currentTab = tab;
-      [tabInstanceBtn, tabQrBtn, tabPairBtn, tabProfileSettingsBtn, tabPasswordSettingsBtn].forEach(b => b.classList.remove('active'));
+      [tabInstanceBtn, tabQrBtn, tabPairBtn, tabSendMessageBtn, tabProfileSettingsBtn, tabPasswordSettingsBtn].forEach(b => b && b.classList.remove('active'));
 
       if (tab === 'instance') {
         tabInstanceBtn.classList.add('active');
@@ -1687,6 +1744,14 @@
         topModeTabsBar.classList.remove('hidden');
         topSettingsTabsBar.classList.add('hidden');
         setMode('pairing');
+      } else if (tab === 'sendmessage') {
+        tabSendMessageBtn.classList.add('active');
+        mainWorkspaceGrid.classList.remove('hidden');
+        profileWorkspace.classList.add('hidden');
+        passwordWorkspace.classList.add('hidden');
+        topModeTabsBar.classList.remove('hidden');
+        topSettingsTabsBar.classList.add('hidden');
+        setMode('sendmessage');
       } else if (tab === 'profile') {
         tabProfileSettingsBtn.classList.add('active');
         mainWorkspaceGrid.classList.add('hidden');
@@ -1717,10 +1782,11 @@
 
     function setMode(mode) {
       currentMode = mode;
-      [tabModeSummary, tabModeQr, tabModePairing].forEach(b => b.classList.remove('active'));
+      [tabModeSummary, tabModeQr, tabModePairing, tabModeSendMsg].forEach(b => b && b.classList.remove('active'));
       viewSummary.classList.add('hidden');
       viewQr.classList.add('hidden');
       viewPairing.classList.add('hidden');
+      if (viewSendMessage) viewSendMessage.classList.add('hidden');
 
       if (mode === 'summary') {
         tabModeSummary.classList.add('active');
@@ -1737,12 +1803,20 @@
         viewPairing.classList.remove('hidden');
         triggerViewAnimation(viewPairing);
         viewModeTitle.textContent = 'Phone Pairing Code';
+      } else if (mode === 'sendmessage') {
+        if (tabModeSendMsg) tabModeSendMsg.classList.add('active');
+        if (viewSendMessage) {
+          viewSendMessage.classList.remove('hidden');
+          triggerViewAnimation(viewSendMessage);
+        }
+        viewModeTitle.textContent = 'Quick WhatsApp Messenger';
       }
     }
 
     tabModeSummary.addEventListener('click', () => setMode('summary'));
     tabModeQr.addEventListener('click', () => setMode('qr'));
     tabModePairing.addEventListener('click', () => setMode('pairing'));
+    if (tabModeSendMsg) tabModeSendMsg.addEventListener('click', () => setMode('sendmessage'));
 
     document.getElementById('btnGotoQr').addEventListener('click', () => {
       setActiveNav('qr');
@@ -1763,6 +1837,7 @@
     tabInstanceBtn.addEventListener('click', () => setActiveNav('instance'));
     tabQrBtn.addEventListener('click', () => setActiveNav('qr'));
     tabPairBtn.addEventListener('click', () => setActiveNav('pair'));
+    if (tabSendMessageBtn) tabSendMessageBtn.addEventListener('click', () => setActiveNav('sendmessage'));
     tabProfileSettingsBtn.addEventListener('click', () => setActiveNav('profile'));
     tabPasswordSettingsBtn.addEventListener('click', () => setActiveNav('password'));
     sidebarAvatarBtn.addEventListener('click', () => setActiveNav('profile'));
@@ -1917,14 +1992,16 @@
       }
     }
 
+    let currentInstData = null;
+
     function renderInstance(inst) {
+      currentInstData = inst;
       document.getElementById('pillInstanceName').textContent = `Instance: ${inst.name}`;
-      document.getElementById('pillPhoneNumber').textContent = `Linked: ${inst.number || inst.ownerJid || 'Connected'}`;
       
+      const cleanPhone = inst.number ? (inst.number.startsWith('+') ? inst.number : `+${inst.number}`) : null;
       document.getElementById('summaryInstanceName').textContent = inst.name || '---';
-      document.getElementById('summaryPhone').textContent = inst.number || inst.ownerJid || 'Not Connected';
-      document.getElementById('summaryProfile').textContent = inst.profileName || 'Active WhatsApp Profile';
       document.getElementById('summaryToken').textContent = inst.token || '---';
+      document.getElementById('summaryProfile').textContent = inst.profileName || 'Active WhatsApp User';
 
       const statusPill = document.getElementById('statusPill');
       const sidebarLiveState = document.getElementById('sidebarLiveState');
@@ -1936,6 +2013,9 @@
 
       const state = (inst.liveState || inst.connectionStatus || inst.status || 'close').toLowerCase();
 
+      document.getElementById('pillPhoneNumber').textContent = cleanPhone ? `Linked: ${cleanPhone}` : (state === 'open' ? 'Linked: Connected' : 'Linked: None');
+      document.getElementById('summaryPhone').textContent = cleanPhone || (state === 'open' ? 'Connected (Active Device)' : 'Not Connected');
+
       if (state === 'open') {
         statusPill.style.background = 'rgba(16, 185, 129, 0.15)';
         statusPill.style.color = '#10b981';
@@ -1946,7 +2026,14 @@
         summaryStatusBanner.className = 'summary-status-banner';
         summaryStatusHeadline.textContent = 'Instance is Live & Connected';
         summaryStatusHeadline.style.color = '#047857';
-        summaryStatusSub.textContent = 'WhatsApp session active with real-time webhooks dispatching.';
+        summaryStatusSub.textContent = 'WhatsApp session active with real-time delivery ready.';
+        
+        const iconWrap = document.getElementById('summaryStatusIcon')?.parentElement;
+        if (iconWrap) {
+          iconWrap.style.background = '#ecfdf5';
+          iconWrap.innerHTML = `<svg id="summaryStatusIcon" style="width: 18px; height: 18px; color: #10b981;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>`;
+        }
+
         btnQuickConnect.classList.add('hidden');
         btnConnect.classList.add('hidden');
       } else if (state === 'connecting') {
@@ -1960,6 +2047,13 @@
         summaryStatusHeadline.textContent = 'Establishing WhatsApp Connection...';
         summaryStatusHeadline.style.color = '#b45309';
         summaryStatusSub.textContent = 'Scan the QR code or link with phone pairing code.';
+
+        const iconWrap = document.getElementById('summaryStatusIcon')?.parentElement;
+        if (iconWrap) {
+          iconWrap.style.background = '#fef3c7';
+          iconWrap.innerHTML = `<svg id="summaryStatusIcon" style="width: 18px; height: 18px; color: #d97706;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+
         btnQuickConnect.classList.remove('hidden');
         btnConnect.classList.add('hidden');
 
@@ -1981,6 +2075,13 @@
         summaryStatusHeadline.textContent = 'Instance is Disconnected';
         summaryStatusHeadline.style.color = '#991b1b';
         summaryStatusSub.textContent = 'Scan QR code or use pairing code to link WhatsApp.';
+
+        const iconWrap = document.getElementById('summaryStatusIcon')?.parentElement;
+        if (iconWrap) {
+          iconWrap.style.background = '#fef2f2';
+          iconWrap.innerHTML = `<svg id="summaryStatusIcon" style="width: 18px; height: 18px; color: #ef4444;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>`;
+        }
+
         btnQuickConnect.classList.remove('hidden');
         btnConnect.classList.remove('hidden');
       }
@@ -1995,6 +2096,76 @@
         } catch (e) {}
       }, 3500);
     }
+
+    // Quick Message Sender Handler
+    document.getElementById('btnSendQuickMsg').addEventListener('click', async () => {
+      const rawPhone = document.getElementById('quickMsgPhone').value.trim();
+      const text = document.getElementById('quickMsgText').value.trim();
+      const resultBox = document.getElementById('quickMsgResultBox');
+      const sendBtn = document.getElementById('btnSendQuickMsg');
+
+      if (!rawPhone) return showToast('Please enter recipient phone number with country code');
+      if (!text) return showToast('Please enter message text');
+      if (!currentInstData || !currentInstData.name || !currentInstData.token) {
+        return showToast('Instance data not loaded yet. Please wait...');
+      }
+
+      const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin 0.8s linear infinite;"></span><span>Sending...</span>';
+      resultBox.classList.add('hidden');
+
+      try {
+        const res = await fetch(`/message/sendText/${currentInstData.name}`, {
+          method: 'POST',
+          headers: {
+            'apikey': currentInstData.token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            number: cleanPhone,
+            text: text
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.response?.message || data.message || 'Failed to send message');
+        }
+
+        resultBox.className = '';
+        resultBox.style.background = '#f0fdf4';
+        resultBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        resultBox.style.color = '#065f46';
+        resultBox.innerHTML = `
+          <div style="font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span style="color:#10b981;">&#10004;</span> WhatsApp Message Dispatched!
+          </div>
+          <div><strong>Recipient:</strong> ${cleanPhone}</div>
+          <div><strong>Status:</strong> ${data.status || 'SENT / PENDING'}</div>
+          <div><strong>Message ID:</strong> <code style="font-size:11px; background:rgba(0,0,0,0.05); padding:2px 4px; border-radius:4px;">${data.key?.id || '---'}</code></div>
+        `;
+        resultBox.classList.remove('hidden');
+        showToast('WhatsApp message sent successfully!');
+      } catch (err) {
+        resultBox.className = '';
+        resultBox.style.background = '#fef2f2';
+        resultBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        resultBox.style.color = '#991b1b';
+        resultBox.innerHTML = `<strong>Failed to send:</strong> ${err.message}`;
+        resultBox.classList.remove('hidden');
+        showToast('Error: ' + err.message);
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = `<svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg><span>Send Message</span>`;
+      }
+    });
+
+    document.getElementById('btnClearQuickMsg').addEventListener('click', () => {
+      document.getElementById('quickMsgPhone').value = '';
+      document.getElementById('quickMsgText').value = '';
+      document.getElementById('quickMsgResultBox').classList.add('hidden');
+    });
 
     // Button Listeners
     document.getElementById('btnSearchRefresh').addEventListener('click', () => {

@@ -159,6 +159,22 @@ async function bootstrap() {
 
   server.listen(httpServer.PORT, () => logger.log(httpServer.TYPE.toUpperCase() + ' - ON: ' + httpServer.PORT));
 
+  // Self-KeepAlive Ping to prevent sleeping on free cloud tiers (e.g. Render)
+  if (httpServer.URL && httpServer.URL.startsWith('http')) {
+    const keepAliveUrl = httpServer.URL.replace(/\/$/, '');
+    const pingIntervalMs = 8 * 60 * 1000; // 8 minutes
+    setInterval(async () => {
+      try {
+        await axios.get(`${keepAliveUrl}/`, {
+          headers: { 'User-Agent': 'PrimeConnector-KeepAlive/1.0' },
+          timeout: 15000,
+        });
+      } catch {
+        // Silent catch for background heartbeat
+      }
+    }, pingIntervalMs);
+  }
+
   initWA().catch((error) => {
     logger.error('Error loading instances: ' + error);
   });

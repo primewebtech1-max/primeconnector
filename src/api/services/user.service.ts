@@ -241,11 +241,34 @@ export class UserService {
     }
 
     const instance = user.instances?.[0] || null;
-    let liveState = instance ? instance.connectionStatus : null;
+    let livePhone = instance?.number || null;
+    let liveProfile = instance?.profileName || null;
 
     if (instance && waMonitor.waInstances[instance.name]) {
-      const liveStatus = waMonitor.waInstances[instance.name]?.connectionStatus;
+      const liveInst = waMonitor.waInstances[instance.name] as any;
+      const liveStatus = liveInst?.connectionStatus;
       liveState = typeof liveStatus === 'string' ? liveStatus : liveStatus?.state || liveState;
+
+      const clientUser = liveInst?.client?.user;
+      if (clientUser?.id) {
+        livePhone = clientUser.id.split(':')[0].split('@')[0];
+      } else if (liveInst?.instance?.number) {
+        livePhone = liveInst.instance.number;
+      }
+      if (clientUser?.name || clientUser?.verifiedName) {
+        liveProfile = clientUser.name || clientUser.verifiedName;
+      } else if (liveInst?.instance?.profileName) {
+        liveProfile = liveInst.instance.profileName;
+      }
+
+      if (livePhone && instance.number !== livePhone) {
+        this.prismaRepository.instance
+          .update({
+            where: { id: instance.id },
+            data: { number: livePhone, profileName: liveProfile },
+          })
+          .catch(() => {});
+      }
     }
 
     return {
@@ -258,6 +281,8 @@ export class UserService {
       instance: instance
         ? {
             ...instance,
+            number: livePhone,
+            profileName: liveProfile,
             liveState,
           }
         : null,
@@ -338,13 +363,27 @@ export class UserService {
         : liveInstance.connectionStatus?.state || 'close'
       : instanceDb.connectionStatus || 'close';
 
+    let livePhone = instanceDb.number;
+    let liveProfile = instanceDb.profileName;
+    const clientUser = (liveInstance as any)?.client?.user;
+    if (clientUser?.id) {
+      livePhone = clientUser.id.split(':')[0].split('@')[0];
+    } else if ((liveInstance as any)?.instance?.number) {
+      livePhone = (liveInstance as any).instance.number;
+    }
+    if (clientUser?.name || clientUser?.verifiedName) {
+      liveProfile = clientUser.name || clientUser.verifiedName;
+    } else if ((liveInstance as any)?.instance?.profileName) {
+      liveProfile = (liveInstance as any).instance.profileName;
+    }
+
     return {
       id: instanceDb.id,
       name: instanceDb.name,
       token: instanceDb.token,
-      number: instanceDb.number,
-      profileName: instanceDb.profileName || liveInstance?.instance?.profileName,
-      profilePicUrl: instanceDb.profilePicUrl || liveInstance?.instance?.profilePicUrl,
+      number: livePhone,
+      profileName: liveProfile,
+      profilePicUrl: instanceDb.profilePicUrl || (liveInstance as any)?.instance?.profilePicUrl,
       status: state,
       qrcode: liveInstance?.qrCode || null,
     };
