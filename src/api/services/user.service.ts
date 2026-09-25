@@ -241,6 +241,7 @@ export class UserService {
     }
 
     const instance = user.instances?.[0] || null;
+    let liveState = instance ? instance.connectionStatus : null;
     let livePhone = instance?.number || null;
     let liveProfile = instance?.profileName || null;
 
