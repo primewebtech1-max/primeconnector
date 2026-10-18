@@ -143,6 +143,7 @@ import FormData from 'form-data';
 import { existsSync, readFileSync } from 'fs';
 import Long from 'long';
 import mimeTypes from 'mime-types';
+import { Socket } from 'net';
 import NodeCache from 'node-cache';
 import cron from 'node-cron';
 import { release } from 'os';
@@ -426,12 +427,26 @@ export class BaileysStartupService extends ChannelStartupService {
     }
 
     if (connection === 'close') {
+      if (this.activeProxyUrl) {
+        this.logger.warn(
+          `[Proxy Fallback] Connection dropped while using proxy ${this.activeProxyUrl}. Clearing active proxy.`,
+        );
+        this.activeProxyUrl = null;
+      }
       const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
       const codesToNotReconnect = [DisconnectReason.loggedOut, DisconnectReason.forbidden, 402, 406];
       const shouldReconnect = !codesToNotReconnect.includes(statusCode);
       if (shouldReconnect) {
         await this.connectToWhatsapp(this.phoneNumber);
       } else {
+        if (statusCode === DisconnectReason.loggedOut || statusCode === 401) {
+          try {
+            const authState = await useMultiFileAuthStatePrisma(this.instance.id, this.cache);
+            await authState.removeCreds();
+          } catch (error) {
+            this.logger.warn(`Error removing old credentials: ${error}`);
+          }
+        }
         this.sendDataWebhook(Events.STATUS_INSTANCE, {
           instance: this.instance.name,
           status: 'closed',
@@ -636,6 +651,50 @@ export class BaileysStartupService extends ChannelStartupService {
     return [];
   }
 
+  private async isProxyReachable(proxyUrl: string, timeoutMs = 2000): Promise<boolean> {
+    return new Promise((resolve) => {
+      try {
+        const parsed = new URL(proxyUrl);
+        const host = parsed.hostname;
+        const port = Number(parsed.port) || (parsed.protocol.startsWith('socks') ? 1080 : 80);
+
+        const socket = new Socket();
+        let isResolved = false;
+
+        const cleanup = () => {
+          if (!isResolved) {
+            isResolved = true;
+            try {
+              socket.destroy();
+            } catch (error) {
+              this.logger.debug(`Socket cleanup: ${error}`);
+            }
+          }
+        };
+
+        socket.setTimeout(timeoutMs);
+        socket.once('connect', () => {
+          cleanup();
+          resolve(true);
+        });
+
+        socket.once('timeout', () => {
+          cleanup();
+          resolve(false);
+        });
+
+        socket.once('error', () => {
+          cleanup();
+          resolve(false);
+        });
+
+        socket.connect(port, host);
+      } catch {
+        resolve(false);
+      }
+    });
+  }
+
   private async resolveProxyOptions(): Promise<{ agent?: any; fetchAgent?: any }> {
     this.activeProxyUrl = null;
     if (!this.localProxy?.enabled) {
@@ -671,16 +730,24 @@ export class BaileysStartupService extends ChannelStartupService {
       }
 
       if (priorityProxies.length > 0) {
-        const rand = Math.floor(Math.random() * priorityProxies.length);
-        const chosen = priorityProxies[rand];
-        this.activeProxyUrl = chosen;
-        this.logger.info(
-          `[Priority Proxy List] Routing WhatsApp connection via: ${chosen} (1 of ${priorityProxies.length} proxies)`,
+        const candidates = [...priorityProxies].sort(() => Math.random() - 0.5);
+        for (const candidate of candidates.slice(0, 5)) {
+          const alive = await this.isProxyReachable(candidate, 1800);
+          if (alive) {
+            this.activeProxyUrl = candidate;
+            this.logger.info(`[Priority Proxy List] Verified live proxy for WhatsApp: ${candidate}`);
+            return {
+              agent: makeProxyAgent(candidate),
+              fetchAgent: makeProxyAgentUndici(candidate),
+            };
+          } else {
+            this.logger.warn(`[Proxy Check] Priority proxy unreachable, skipping: ${candidate}`);
+          }
+        }
+        this.logger.warn(
+          `[Proxy Fallback] None of the priority proxies were reachable. Proceeding with direct WhatsApp connection to ensure QR code generation succeeds.`,
         );
-        return {
-          agent: makeProxyAgent(chosen),
-          fetchAgent: makeProxyAgentUndici(chosen),
-        };
+        return {};
       }
     } catch (e: any) {
       this.logger.error(`Error reading priority proxy list: ${e?.message || e}`);
@@ -697,14 +764,22 @@ export class BaileysStartupService extends ChannelStartupService {
       try {
         const list = await this.fetchDynamicProxyList(host);
         if (list.length > 0) {
-          const rand = Math.floor(Math.random() * list.length);
-          const chosen = list[rand];
-          this.activeProxyUrl = chosen;
-          this.logger.info(`[ProxyScrape] Routing WhatsApp connection via: ${chosen}`);
-          return {
-            agent: makeProxyAgent(chosen),
-            fetchAgent: makeProxyAgentUndici(chosen),
-          };
+          const candidates = [...list].sort(() => Math.random() - 0.5);
+          for (const candidate of candidates.slice(0, 5)) {
+            const alive = await this.isProxyReachable(candidate, 1800);
+            if (alive) {
+              this.activeProxyUrl = candidate;
+              this.logger.info(`[ProxyScrape] Verified live proxy for WhatsApp: ${candidate}`);
+              return {
+                agent: makeProxyAgent(candidate),
+                fetchAgent: makeProxyAgentUndici(candidate),
+              };
+            }
+          }
+          this.logger.warn(
+            `[Proxy Fallback] None of the ProxyScrape proxies were reachable. Proceeding with direct WhatsApp connection.`,
+          );
+          return {};
         }
       } catch (err: any) {
         this.logger.error(`Error applying ProxyScrape proxy: ${err?.message || err}`);
@@ -714,12 +789,18 @@ export class BaileysStartupService extends ChannelStartupService {
     // Case 2: Full Proxy URL (e.g. socks5://1.2.3.4:1080 or http://user:pass@host:port)
     if (/^[a-zA-Z0-9+-.]+:\/\//.test(host)) {
       try {
-        this.activeProxyUrl = host;
-        this.logger.info(`[URL Proxy] Routing WhatsApp connection via: ${host}`);
-        return {
-          agent: makeProxyAgent(host),
-          fetchAgent: makeProxyAgentUndici(host),
-        };
+        const alive = await this.isProxyReachable(host, 2200);
+        if (alive) {
+          this.activeProxyUrl = host;
+          this.logger.info(`[URL Proxy] Verified live proxy for WhatsApp: ${host}`);
+          return {
+            agent: makeProxyAgent(host),
+            fetchAgent: makeProxyAgentUndici(host),
+          };
+        } else {
+          this.logger.warn(`[Proxy Fallback] Proxy URL ${host} unreachable. Proceeding with direct connection.`);
+          return {};
+        }
       } catch (err: any) {
         this.logger.error(`Error applying URL proxy: ${err?.message || err}`);
       }
@@ -728,25 +809,31 @@ export class BaileysStartupService extends ChannelStartupService {
     // Case 3: Standard Residential / Datacenter Proxy (host, port, protocol, user, pass)
     try {
       const proto = this.localProxy.protocol || 'http';
-      this.logger.info(
-        `[Standard Proxy] Routing WhatsApp connection via: ${proto}://${this.localProxy.host}:${this.localProxy.port || '80'}`,
-      );
-      return {
-        agent: makeProxyAgent({
-          host: this.localProxy.host,
-          port: this.localProxy.port,
-          protocol: this.localProxy.protocol,
-          username: this.localProxy.username,
-          password: this.localProxy.password,
-        }),
-        fetchAgent: makeProxyAgentUndici({
-          host: this.localProxy.host,
-          port: this.localProxy.port,
-          protocol: this.localProxy.protocol,
-          username: this.localProxy.username,
-          password: this.localProxy.password,
-        }),
-      };
+      const cleanPort = this.localProxy.port || (proto.startsWith('socks') ? '1080' : '80');
+      const proxyStr = `${proto}://${this.localProxy.host}:${cleanPort}`;
+      const alive = await this.isProxyReachable(proxyStr, 2200);
+      if (alive) {
+        this.logger.info(`[Standard Proxy] Verified live proxy for WhatsApp: ${proxyStr}`);
+        return {
+          agent: makeProxyAgent({
+            host: this.localProxy.host,
+            port: this.localProxy.port,
+            protocol: this.localProxy.protocol,
+            username: this.localProxy.username,
+            password: this.localProxy.password,
+          }),
+          fetchAgent: makeProxyAgentUndici({
+            host: this.localProxy.host,
+            port: this.localProxy.port,
+            protocol: this.localProxy.protocol,
+            username: this.localProxy.username,
+            password: this.localProxy.password,
+          }),
+        };
+      } else {
+        this.logger.warn(`[Proxy Fallback] Standard proxy ${proxyStr} unreachable. Proceeding with direct connection.`);
+        return {};
+      }
     } catch (err: any) {
       this.logger.error(`Error applying standard proxy: ${err?.message || err}`);
     }

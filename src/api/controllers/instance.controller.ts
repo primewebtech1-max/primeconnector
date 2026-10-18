@@ -316,11 +316,49 @@ export class InstanceController {
       }
 
       if (state === 'open') {
-        return await this.connectionState({ instanceName });
+        return {
+          instance: {
+            instanceName,
+            state: 'open',
+            status: 'open',
+          },
+          state: 'open',
+        };
       }
 
-      if (state === 'close') {
+      // Connect if closed, or if in connecting state but client socket is missing or no QR code was ever generated
+      const needsConnect =
+        state === 'close' ||
+        !instance.client ||
+        !instance.client.ws ||
+        (state === 'connecting' && !instance?.qrCode?.code && !instance?.qrCode?.pairingCode);
+
+      if (needsConnect) {
+        this.logger.info(`[Connect] Triggering WhatsApp connection for ${instanceName} (state: ${state})`);
         await instance.connectToWhatsapp(number);
+      }
+
+      // If QR or pairing code is already available in memory, return immediately
+      const initialQr = instance?.qrCode;
+      if (number && initialQr?.pairingCode) {
+        return {
+          instance: { instanceName, status: instance?.connectionStatus?.state || 'connecting' },
+          qrcode: initialQr,
+          pairingCode: initialQr.pairingCode,
+          code: initialQr.code || null,
+          base64: initialQr.base64 || null,
+          count: initialQr.count || 1,
+        };
+      }
+      if (!number && (initialQr?.code || initialQr?.base64)) {
+        return {
+          instance: { instanceName, status: instance?.connectionStatus?.state || 'connecting' },
+          qrcode: initialQr,
+          pairingCode: null,
+          code: initialQr.code,
+          base64: initialQr.base64,
+          count: initialQr.count || 1,
+        };
       }
 
       // Active polling wait: wait up to 15 seconds for Baileys to emit QR base64, pairing code, or open state
@@ -330,15 +368,32 @@ export class InstanceController {
       while (Date.now() - startTime < waitTimeoutMs) {
         const currentState = instance?.connectionStatus?.state;
         if (currentState === 'open') {
-          return await this.connectionState({ instanceName });
+          return {
+            instance: { instanceName, state: 'open', status: 'open' },
+            state: 'open',
+          };
         }
 
         const qr = instance?.qrCode;
         if (number && qr?.pairingCode) {
-          return qr;
+          return {
+            instance: { instanceName, status: currentState || 'connecting' },
+            qrcode: qr,
+            pairingCode: qr.pairingCode,
+            code: qr.code || null,
+            base64: qr.base64 || null,
+            count: qr.count || 1,
+          };
         }
-        if (!number && qr?.base64) {
-          return qr;
+        if (!number && (qr?.code || qr?.base64)) {
+          return {
+            instance: { instanceName, status: currentState || 'connecting' },
+            qrcode: qr,
+            pairingCode: null,
+            code: qr.code,
+            base64: qr.base64,
+            count: qr.count || 1,
+          };
         }
 
         // If closed after initial start, abort wait
@@ -349,7 +404,15 @@ export class InstanceController {
         await delay(300);
       }
 
-      return instance?.qrCode || { count: 0, code: null, base64: null };
+      const finalQr = instance?.qrCode;
+      return {
+        instance: { instanceName, status: instance?.connectionStatus?.state || 'connecting' },
+        qrcode: finalQr || { count: 0, code: null, base64: null, pairingCode: null },
+        pairingCode: finalQr?.pairingCode || null,
+        code: finalQr?.code || null,
+        base64: finalQr?.base64 || null,
+        count: finalQr?.count || 0,
+      };
     } catch (error) {
       this.logger.error(error);
       return { error: true, message: error.toString() };
