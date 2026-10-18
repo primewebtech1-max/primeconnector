@@ -48,9 +48,28 @@ export class ProxyController {
 
   public async testProxy(proxy: ProxyDto) {
     try {
-      const serverIp = await axios.get('https://icanhazip.com/');
+      const host = (proxy.host || '').trim();
+      const isDynamic =
+        host.includes('proxyscrape') ||
+        host.includes('free-proxy-list') ||
+        host.includes('display_proxies') ||
+        host.includes('raw.githubusercontent.com');
+
+      if (isDynamic) {
+        logger.info(`testProxy: validating dynamic proxy list endpoint: ${host}`);
+        const listRes = await axios.get(host, { timeout: 8000 });
+        const hasContent = typeof listRes.data === 'string' && listRes.data.trim().length > 0;
+        if (listRes.status === 200 && hasContent) {
+          logger.info('testProxy: dynamic proxy list endpoint is active and returning proxies');
+          return true;
+        }
+        return false;
+      }
+
+      const serverIp = await axios.get('https://icanhazip.com/', { timeout: 6000 });
       const response = await axios.get('https://icanhazip.com/', {
         httpsAgent: makeProxyAgent(proxy),
+        timeout: 10000,
       });
 
       const result = response?.data !== serverIp?.data;

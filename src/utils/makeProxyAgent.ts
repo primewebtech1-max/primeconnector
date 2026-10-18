@@ -6,34 +6,29 @@ import { ProxyAgent } from 'undici';
 type Proxy = {
   host: string;
   password?: string;
-  port: string;
-  protocol: string;
+  port?: string;
+  protocol?: string;
   username?: string;
 };
 
 function selectProxyAgent(proxyUrl: string): HttpsProxyAgent<string> | SocksProxyAgent {
   const url = new URL(proxyUrl);
+  const protocol = url.protocol.toLowerCase();
 
-  // NOTE: The following constants are not used in the function but are defined for clarity.
-  // When a proxy URL is used to build the URL object, the protocol returned by procotol's property contains a `:` at
-  // the end so, we add the protocol constants without the `:` to avoid confusion.
-  const PROXY_HTTP_PROTOCOL = 'http:';
-  const PROXY_SOCKS_PROTOCOL = 'socks:';
-  const PROXY_SOCKS5_PROTOCOL = 'socks5:';
-
-  switch (url.protocol) {
-    case PROXY_HTTP_PROTOCOL:
+  switch (protocol) {
+    case 'http:':
+    case 'https:':
       return new HttpsProxyAgent(url);
-    case PROXY_SOCKS_PROTOCOL:
-    case PROXY_SOCKS5_PROTOCOL: {
-      let urlSocks = '';
-
-      if (url.username && url.password) {
-        urlSocks = `socks://${url.username}:${url.password}@${url.hostname}:${url.port}`;
-      } else {
-        urlSocks = `socks://${url.hostname}:${url.port}`;
-      }
-
+    case 'socks:':
+    case 'socks4:':
+    case 'socks4a:':
+    case 'socks5:':
+    case 'socks5h:': {
+      const proto = protocol.replace(':', '');
+      const auth =
+        url.username && url.password ? `${encodeURIComponent(url.username)}:${encodeURIComponent(url.password)}@` : '';
+      const port = url.port ? `:${url.port}` : ':1080';
+      const urlSocks = `${proto}://${auth}${url.hostname}${port}`;
       return new SocksProxyAgent(urlSocks);
     }
     default:
@@ -47,11 +42,19 @@ export function makeProxyAgent(proxy: Proxy | string): HttpsProxyAgent<string> |
   }
 
   const { host, password, port, protocol, username } = proxy;
-  let proxyUrl = `${protocol}://${host}:${port}`;
-
-  if (username && password) {
-    proxyUrl = `${protocol}://${username}:${password}@${host}:${port}`;
+  if (!host) {
+    throw new Error('Proxy host is required');
   }
+
+  // If host is already a full URL with scheme (e.g. http://... or socks5://...)
+  if (/^[a-zA-Z0-9+-.]+:\/\//.test(host)) {
+    return selectProxyAgent(host);
+  }
+
+  const cleanProtocol = (protocol || 'http').replace(/:$/, '').toLowerCase();
+  const cleanPort = port || (cleanProtocol.startsWith('socks') ? '1080' : '80');
+  const auth = username && password ? `${encodeURIComponent(username)}:${encodeURIComponent(password)}@` : '';
+  const proxyUrl = `${cleanProtocol}://${auth}${host}:${cleanPort}`;
 
   return selectProxyAgent(proxyUrl);
 }
@@ -62,46 +65,49 @@ export function makeProxyAgentUndici(proxy: Proxy | string): ProxyAgent {
 
   if (typeof proxy === 'string') {
     const url = new URL(proxy);
-    protocol = url.protocol.replace(':', '');
+    protocol = url.protocol.replace(':', '').toLowerCase();
     proxyUrl = proxy;
   } else {
     const { host, password, port, protocol: proto, username } = proxy;
-    protocol = (proto || 'http').replace(':', '');
-
-    if (protocol === 'socks') {
-      protocol = 'socks5';
+    if (!host) {
+      throw new Error('Proxy host is required');
     }
 
-    const auth = username && password ? `${username}:${password}@` : '';
-    proxyUrl = `${protocol}://${auth}${host}:${port}`;
+    if (/^[a-zA-Z0-9+-.]+:\/\//.test(host)) {
+      const url = new URL(host);
+      protocol = url.protocol.replace(':', '').toLowerCase();
+      proxyUrl = host;
+    } else {
+      protocol = (proto || 'http').replace(':', '').toLowerCase();
+      const cleanPort = port || (protocol.startsWith('socks') ? '1080' : '80');
+      const auth = username && password ? `${encodeURIComponent(username)}:${encodeURIComponent(password)}@` : '';
+      proxyUrl = `${protocol}://${auth}${host}:${cleanPort}`;
+    }
   }
 
   protocol = protocol.toLowerCase();
 
-  const PROXY_HTTP_PROTOCOL = 'http';
-  const PROXY_HTTPS_PROTOCOL = 'https';
-  const PROXY_SOCKS4_PROTOCOL = 'socks4';
-  const PROXY_SOCKS5_PROTOCOL = 'socks5';
-
   switch (protocol) {
-    case PROXY_HTTP_PROTOCOL:
-    case PROXY_HTTPS_PROTOCOL:
+    case 'http':
+    case 'https':
       return new ProxyAgent(proxyUrl);
 
-    case PROXY_SOCKS4_PROTOCOL:
-    case PROXY_SOCKS5_PROTOCOL: {
+    case 'socks4':
+    case 'socks4a':
+    case 'socks':
+    case 'socks5':
+    case 'socks5h': {
       let type: 4 | 5 = 5;
-
-      if (PROXY_SOCKS4_PROTOCOL === protocol) type = 4;
+      if (protocol.startsWith('socks4')) type = 4;
 
       const url = new URL(proxyUrl);
 
       return socksDispatcher({
         type: type,
         host: url.hostname,
-        port: Number(url.port),
-        userId: url.username || undefined,
-        password: url.password || undefined,
+        port: Number(url.port) || 1080,
+        userId: url.username ? decodeURIComponent(url.username) : undefined,
+        password: url.password ? decodeURIComponent(url.password) : undefined,
       });
     }
 

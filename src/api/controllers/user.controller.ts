@@ -25,6 +25,10 @@ export class UserController {
     return await this.userService.deleteUser(id);
   }
 
+  public async resetPassword(id: string, password?: string) {
+    return await this.userService.resetPassword(id, password);
+  }
+
   // ---------------- User Portal Actions ----------------
   public async login(data: LoginUserData) {
     return await this.userService.login(data);
@@ -56,5 +60,9 @@ export class UserController {
 
   public async deleteUserInstance(userId: string) {
     return await this.userService.deleteUserInstance(userId);
+  }
+
+  public async sendUserMessage(userId: string, data: { number: string; text: string }) {
+    return await this.userService.sendUserMessage(userId, data);
   }
 }

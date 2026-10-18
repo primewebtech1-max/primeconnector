@@ -9,7 +9,7 @@ import { TypebotService } from '@api/integrations/chatbot/typebot/services/typeb
 import { PrismaRepository, Query } from '@api/repository/repository.service';
 import { eventManager, waMonitor } from '@api/server.module';
 import { Events, wa } from '@api/types/wa.types';
-import { Auth, Chatwoot, ConfigService, HttpServer, Proxy } from '@config/env.config';
+import { Auth, Chatwoot, ConfigService, HttpServer } from '@config/env.config';
 import { Logger } from '@config/logger.config';
 import { NotFoundException } from '@exceptions';
 import { Contact, Message, Prisma } from '@prisma/client';
@@ -365,29 +365,38 @@ export class ChannelStartupService {
   public async loadProxy() {
     this.localProxy.enabled = false;
 
-    const proxyConfig = this.configService.get<Proxy>('PROXY');
-    if (proxyConfig.HOST) {
+    const proxyConfig = this.configService.get<any>('PROXY');
+    const isGlobalEnabled =
+      proxyConfig?.ENABLED !== undefined
+        ? proxyConfig.ENABLED
+        : !!(proxyConfig?.HOST && proxyConfig.HOST.trim().length > 0);
+
+    if (isGlobalEnabled && proxyConfig?.HOST) {
       this.localProxy.enabled = true;
-      this.localProxy.host = proxyConfig.HOST;
+      this.localProxy.host = proxyConfig.HOST.trim();
       this.localProxy.port = proxyConfig.PORT || '80';
       this.localProxy.protocol = proxyConfig.PROTOCOL || 'http';
       this.localProxy.username = proxyConfig.USERNAME;
       this.localProxy.password = proxyConfig.PASSWORD;
     }
 
-    const data = await this.prismaRepository.proxy.findUnique({
-      where: {
-        instanceId: this.instanceId,
-      },
-    });
+    if (this.instanceId) {
+      const data = await this.prismaRepository.proxy.findUnique({
+        where: {
+          instanceId: this.instanceId,
+        },
+      });
 
-    if (data?.enabled) {
-      this.localProxy.enabled = true;
-      this.localProxy.host = data?.host;
-      this.localProxy.port = data?.port;
-      this.localProxy.protocol = data?.protocol;
-      this.localProxy.username = data?.username;
-      this.localProxy.password = data?.password;
+      if (data) {
+        this.localProxy.enabled = data.enabled;
+        if (data.enabled) {
+          this.localProxy.host = data.host;
+          this.localProxy.port = data.port;
+          this.localProxy.protocol = data.protocol;
+          this.localProxy.username = data.username;
+          this.localProxy.password = data.password;
+        }
+      }
     }
   }
 

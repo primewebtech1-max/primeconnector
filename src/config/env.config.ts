@@ -363,6 +363,7 @@ export type Telemetry = {
 };
 
 export type Proxy = {
+  ENABLED?: boolean;
   HOST?: string;
   PORT?: string;
   PROTOCOL?: string;
@@ -882,6 +883,10 @@ export class ConfigService {
         URL: process.env?.TELEMETRY_URL,
       },
       PROXY: {
+        ENABLED:
+          process.env?.PROXY_ENABLED === undefined
+            ? !!(process.env?.PROXY_HOST && process.env?.PROXY_HOST.trim().length > 0)
+            : process.env?.PROXY_ENABLED === 'true',
         HOST: process.env?.PROXY_HOST,
         PORT: process.env?.PROXY_PORT,
         PROTOCOL: process.env?.PROXY_PROTOCOL,

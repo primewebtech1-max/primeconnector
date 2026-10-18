@@ -9,7 +9,7 @@ import { SettingsService } from '@api/services/settings.service';
 import { Events, Integration, wa } from '@api/types/wa.types';
 import { Auth, Chatwoot, ConfigService, HttpServer, WaBusiness } from '@config/env.config';
 import { Logger } from '@config/logger.config';
-import { BadRequestException, InternalServerErrorException, UnauthorizedException } from '@exceptions';
+import { BadRequestException, UnauthorizedException } from '@exceptions';
 import { delay } from 'baileys';
 import { isArray, isURL } from 'class-validator';
 import EventEmitter2 from 'eventemitter2';
@@ -315,28 +315,41 @@ export class InstanceController {
         throw new BadRequestException('The "' + instanceName + '" instance does not exist');
       }
 
-      if (state == 'open') {
+      if (state === 'open') {
         return await this.connectionState({ instanceName });
       }
 
-      if (state == 'connecting') {
-        return instance.qrCode;
-      }
-
-      if (state == 'close') {
+      if (state === 'close') {
         await instance.connectToWhatsapp(number);
-
-        await delay(2000);
-        return instance.qrCode;
       }
 
-      return {
-        instance: {
-          instanceName: instanceName,
-          status: state,
-        },
-        qrcode: instance?.qrCode,
-      };
+      // Active polling wait: wait up to 15 seconds for Baileys to emit QR base64, pairing code, or open state
+      const waitTimeoutMs = 15000;
+      const startTime = Date.now();
+
+      while (Date.now() - startTime < waitTimeoutMs) {
+        const currentState = instance?.connectionStatus?.state;
+        if (currentState === 'open') {
+          return await this.connectionState({ instanceName });
+        }
+
+        const qr = instance?.qrCode;
+        if (number && qr?.pairingCode) {
+          return qr;
+        }
+        if (!number && qr?.base64) {
+          return qr;
+        }
+
+        // If closed after initial start, abort wait
+        if (currentState === 'close' && Date.now() - startTime > 3000) {
+          break;
+        }
+
+        await delay(300);
+      }
+
+      return instance?.qrCode || { count: 0, code: null, base64: null };
     } catch (error) {
       this.logger.error(error);
       return { error: true, message: error.toString() };
@@ -434,18 +447,14 @@ export class InstanceController {
   }
 
   public async logout({ instanceName }: InstanceDto) {
-    const { instance } = await this.connectionState({ instanceName });
-
-    if (instance.state === 'close') {
-      throw new BadRequestException('The "' + instanceName + '" instance is not connected');
-    }
-
     try {
-      await this.waMonitor.waInstances[instanceName]?.logoutInstance();
-
+      if (this.waMonitor.waInstances[instanceName]) {
+        await this.waMonitor.waInstances[instanceName].logoutInstance();
+      }
       return { status: 'SUCCESS', error: false, response: { message: 'Instance logged out' } };
     } catch (error) {
-      throw new InternalServerErrorException(error.toString());
+      this.logger.warn(`Logout error for ${instanceName}: ${error}`);
+      return { status: 'SUCCESS', error: false, response: { message: 'Instance logged out' } };
     }
   }
 

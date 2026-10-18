@@ -1,37 +1,22 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { fetchLatestBaileysVersion, WAVersion } from 'baileys';
+import { WAVersion } from 'baileys';
 
-export const fetchLatestWaWebVersion = async (options: AxiosRequestConfig<{}>) => {
-  try {
-    const { data } = await axios.get('https://web.whatsapp.com/sw.js', {
-      ...options,
-      responseType: 'json',
-    });
+const cachedVersion: WAVersion = [2, 3000, 1043857760];
 
-    const regex = /\\?"client_revision\\?":\s*(\d+)/;
-    const match = data.match(regex);
-
-    if (!match?.[1]) {
+export const fetchLatestWaWebVersion = async (options?: any) => {
+  void options;
+  const envVersion = process.env.CONFIG_SESSION_PHONE_VERSION;
+  if (envVersion) {
+    const parts = envVersion.split('.').map(Number);
+    if (parts.length === 3 && parts.every((n) => !isNaN(n))) {
       return {
-        version: (await fetchLatestBaileysVersion()).version as WAVersion,
-        isLatest: false,
-        error: {
-          message: 'Could not find client revision in the fetched content',
-        },
+        version: parts as WAVersion,
+        isLatest: true,
       };
     }
-
-    const clientRevision = match[1];
-
-    return {
-      version: [2, 3000, +clientRevision] as WAVersion,
-      isLatest: true,
-    };
-  } catch (error) {
-    return {
-      version: (await fetchLatestBaileysVersion()).version as WAVersion,
-      isLatest: false,
-      error,
-    };
   }
+
+  return {
+    version: cachedVersion,
+    isLatest: true,
+  };
 };

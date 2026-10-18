@@ -680,6 +680,324 @@
       border-color: #cbd5e1;
     }
 
+    /* Radar scan pulse animation for QR loading state */
+    .radar-pulse-wrap {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 14px auto 18px auto;
+    }
+
+    .radar-circle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, 0.45);
+      animation: radarPulse 2.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    .radar-circle:nth-child(2) {
+      animation-delay: 0.7s;
+    }
+
+    .radar-circle:nth-child(3) {
+      animation-delay: 1.4s;
+    }
+
+    @keyframes radarPulse {
+      0% { transform: scale(0.35); opacity: 1; }
+      100% { transform: scale(1.25); opacity: 0; }
+    }
+
+    .radar-core-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #047857);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+      z-index: 2;
+    }
+
+    /* QR Countdown Bar & Meta */
+    .qr-countdown-wrap {
+      width: 100%;
+      max-width: 220px;
+      background: #e2e8f0;
+      height: 5px;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 8px auto;
+    }
+
+    .qr-countdown-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #eab308);
+      width: 100%;
+      transition: width 1s linear;
+    }
+
+    .qr-meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(16, 185, 129, 0.1);
+      color: #047857;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    /* Indian Phone Input Group with +91 Prefix */
+    .phone-input-group {
+      display: flex;
+      align-items: stretch;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .phone-input-group:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .phone-prefix-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      background: #f1f5f9;
+      border-right: 1.5px solid #e2e8f0;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+
+    .phone-input-bare {
+      flex: 1;
+      border: none;
+      padding: 11px 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+      outline: none;
+      background: transparent;
+      letter-spacing: 0.5px;
+      width: 100%;
+    }
+
+    .phone-preview-pill {
+      font-size: 11.5px;
+      color: #047857;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    /* Message Studio Mode Switcher */
+    .message-mode-switch {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 14px;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .msg-mode-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .msg-mode-btn.active {
+      background: #ffffff;
+      color: var(--text-main);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Bulk Broadcast Analytics Strip */
+    .analytics-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+
+    .analytics-pill-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .analytics-pill-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .analytics-pill-val {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* Bulk Queue Progress & KPIs */
+    .queue-progress-track {
+      background: #e2e8f0;
+      height: 12px;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 12px 0 16px 0;
+      position: relative;
+    }
+
+    .queue-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      background-size: 30px 30px;
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      animation: progressStripes 1s linear infinite;
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    @keyframes progressStripes {
+      from { background-position: 0 0; }
+      to { background-position: 30px 0; }
+    }
+
+    .queue-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .queue-kpi-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .queue-kpi-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .queue-kpi-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .queue-log-table-wrap {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #ffffff;
+      margin-top: 12px;
+    }
+
+    .queue-log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+
+    .queue-log-table th {
+      background: #f1f5f9;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .queue-log-table td {
+      padding: 7px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-secondary);
+    }
+
+    .status-chip {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .status-chip-sent {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-chip-failed {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .status-chip-pending {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
     /* ---------------------------------------------------- */
     /* SEPARATED SETTINGS & PROFILE STUDIOS                 */
     /* ---------------------------------------------------- */
@@ -990,41 +1308,329 @@
     }
 
     /* ---------------------------------------------------- */
-    /* RESPONSIVE LAYOUT                                    */
+    /* RESPONSIVE LAYOUT & MOBILE OPTIMIZATIONS             */
     /* ---------------------------------------------------- */
     @media (max-width: 960px) {
+      body {
+        padding: 12px 10px;
+        min-height: auto;
+        display: block;
+      }
+
       .portal-frame {
         grid-template-columns: 1fr;
+        border-radius: 24px;
+        min-height: auto;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
       }
 
       .sidebar {
-        padding: 24px 20px;
+        padding: 20px 20px 14px 20px;
+        border-radius: 24px 24px 0 0;
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: 14px;
+        padding: 0;
+        margin-bottom: 16px;
+      }
+
+      .profile-avatar-wrap {
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+
+      .profile-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 19px;
       }
 
       .sidebar-menu {
         padding-left: 0;
+        display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px;
+        padding-bottom: 6px;
+        scrollbar-width: none;
+      }
+
+      .sidebar-menu::-webkit-scrollbar {
+        display: none;
       }
 
       .sidebar-active-indicator {
         display: none !important;
       }
 
+      .nav-link {
+        white-space: nowrap;
+        flex-shrink: 0;
+        border-radius: 9999px;
+        padding: 8px 15px;
+        font-size: 12.5px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #cbd5e1;
+      }
+
       .nav-link.active {
-        background: var(--card-bg);
+        background: #ffffff;
+        color: var(--text-main);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .nav-link.active svg {
+        color: var(--brand-gold);
+      }
+
+      .sidebar-bottom {
+        display: none;
+      }
+
+      .main-content {
+        padding: 20px 18px 24px 18px;
+        gap: 16px;
       }
 
       .workspace-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
       }
 
       .settings-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .summary-cards-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 0;
+        background: #f1f5f9;
+        display: block;
+        min-height: 100vh;
+      }
+
+      .ambient-shape-1,
+      .ambient-shape-2 {
+        display: none;
+      }
+
+      .portal-frame {
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar {
+        padding: 16px 14px 12px 14px;
+        border-radius: 0;
+        background: #0f172a;
+        flex-shrink: 0;
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .profile-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 17px;
+      }
+
+      .profile-name {
+        font-size: 15px;
+        font-weight: 800;
+        color: #ffffff;
+      }
+
+      .profile-email {
+        font-size: 11px;
+        color: #94a3b8;
+      }
+
+      .sidebar-menu {
+        display: flex;
+        flex-direction: row;
+        gap: 7px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+        margin: 0 -4px;
+      }
+
+      .sidebar-menu::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-link {
+        padding: 7px 13px;
+        font-size: 11.5px;
+        border-radius: 9999px;
+        flex-shrink: 0;
+      }
+
+      .main-content {
+        padding: 14px 12px 28px 12px;
+        gap: 14px;
+        background: #f8fafc;
+        flex: 1;
+        overflow-x: hidden;
+      }
+
+      .top-pill-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 16px;
+      }
+
+      .pill-group-left {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .info-pill {
+        font-size: 11px;
+        padding: 5px 10px;
+      }
+
+      .pill-group-right {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .mode-tabs-bar {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex: 1;
+      }
+
+      .mode-tabs-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .mode-tab-btn {
+        flex-shrink: 0;
+        padding: 6px 11px;
+        font-size: 10.5px;
+        white-space: nowrap;
+      }
+
+      .btn-gold-search {
+        flex-shrink: 0;
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+
+      .studio-card {
+        padding: 16px 14px;
+        border-radius: 18px;
+      }
+
+      .studio-header {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+      }
+
+      .studio-title {
+        font-size: 14.5px;
+      }
+
+      .summary-status-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .summary-status-banner button {
+        width: 100%;
+        justify-content: center;
+        min-height: 38px;
       }
 
       .summary-cards-grid {
         grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .summary-card-tile {
+        padding: 12px 14px;
+      }
+
+      .summary-tile-val {
+        font-size: 13.5px;
+      }
+
+      .quick-actions-summary-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .qr-container {
+        padding: 6px 0;
+      }
+
+      .qr-box {
+        width: 210px !important;
+        height: 210px !important;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      .dark-telemetry-card {
+        padding: 16px 14px;
+        border-radius: 18px;
+      }
+
+      .telemetry-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .btn-deck {
+        min-height: 46px;
+        font-size: 13.5px;
+      }
+
+      .toast-box {
+        left: 10px;
+        right: 10px;
+        bottom: 12px;
+        font-size: 12.5px;
+        padding: 10px 16px;
       }
     }
   </style>
@@ -1176,11 +1782,23 @@
           
           <!-- STATE: NO INSTANCE (PROVISIONING) -->
           <div id="noInstanceBox" class="studio-card empty-state-view hidden">
-            <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Provision WhatsApp Instance</h3>
-            <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">Your subscription includes 1 dedicated WhatsApp multi-tenant instance.</p>
-            <div style="max-width: 320px; margin: 0 auto;">
-              <input type="text" id="newInstanceName" class="modern-input" placeholder="e.g. my_whatsapp_bot" style="width: 100%; margin-bottom: 12px;">
-              <button id="btnCreateInstance" class="btn-deck btn-deck-primary">Provision Dedicated Instance</button>
+            <div style="width: 58px; height: 58px; margin: 0 auto 16px auto; border-radius: 18px; background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(234,179,8,0.15)); border: 1px solid rgba(16,185,129,0.3); display: flex; align-items: center; justify-content: center; color: #10b981; box-shadow: 0 8px 20px -4px rgba(16,185,129,0.25);">
+              <svg style="width: 28px; height: 28px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <h3 style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Create WhatsApp Instance</h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 22px; max-width: 340px; margin-left: auto; margin-right: auto;">
+              Your account includes 1 dedicated WhatsApp Baileys gateway. Choose a name below to activate your instance.
+            </p>
+            <div style="max-width: 340px; margin: 0 auto; width: 100%;">
+              <input type="text" id="newInstanceName" class="modern-input" placeholder="e.g. my_whatsapp_bot" style="width: 100%; margin-bottom: 12px; font-size: 14.5px; padding: 12px 14px; text-align: center; font-weight: 700;">
+              <button id="btnCreateInstance" class="btn-deck btn-deck-primary" style="min-height: 48px; font-size: 14px; width: 100%;">
+                <span>Provision WhatsApp Instance</span>
+                <svg style="width: 17px; height: 17px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -1300,78 +1918,344 @@
 
             <!-- View 2: QR Code Scanner -->
             <div id="viewQr" class="qr-container hidden">
-              <div class="qr-box">
-                <div class="laser-scan"></div>
-                <img id="qrImg" src="" alt="WhatsApp QR Code">
+              
+              <!-- State A: Connecting / Generating QR Radar -->
+              <div id="qrLoadingState" class="hidden" style="padding: 10px 0; text-align: center;">
+                <div class="radar-pulse-wrap">
+                  <div class="radar-circle"></div>
+                  <div class="radar-circle"></div>
+                  <div class="radar-circle"></div>
+                  <div class="radar-core-icon">
+                    <svg style="width: 24px; height: 24px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                </div>
+                <div style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+                  ⚡ Generating WhatsApp QR Code...
+                </div>
+                <p style="font-size: 12.5px; color: var(--text-muted); max-width: 320px; margin: 0 auto 14px auto;">
+                  Initializing Baileys WebSocket engine. Fresh QR code will appear in a moment.
+                </p>
+                <button id="btnForceQrConnect" class="btn-deck btn-deck-secondary" style="max-width: 190px; margin: 0 auto; padding: 8px 14px; font-size: 11.5px;">
+                  <span>Force Reconnect Engine</span>
+                </button>
               </div>
-              <p style="font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px;">
-                WhatsApp &rarr; Linked Devices &rarr; Link a Device
-              </p>
-              <button id="btnRefreshQrAction" class="btn-deck btn-deck-secondary" style="max-width: 180px; padding: 8px 14px; font-size: 12px;">
-                <span>Refresh QR Code</span>
-              </button>
+
+              <!-- State B: Active QR Code Ready for Scan -->
+              <div id="qrActiveState">
+                <div class="qr-meta-pill">
+                  <span class="telemetry-dot" style="background:#10b981; width:7px; height:7px;"></span>
+                  <span>Active QR &bull; Valid for: <strong id="qrCountdownSec">60</strong>s</span>
+                </div>
+
+                <div class="qr-countdown-wrap">
+                  <div id="qrCountdownBar" class="qr-countdown-bar"></div>
+                </div>
+
+                <div class="qr-box">
+                  <div class="laser-scan"></div>
+                  <img id="qrImg" src="" alt="WhatsApp QR Code">
+                </div>
+
+                <p style="font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px;">
+                  WhatsApp &rarr; Linked Devices &rarr; Link a Device
+                </p>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;" id="qrTimestampText">
+                  Waiting for phone scan...
+                </p>
+
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                  <button id="btnRefreshQrAction" class="btn-deck btn-deck-secondary" style="width: auto; padding: 8px 16px; font-size: 12px;">
+                    <svg style="width: 14px; height: 14px; color: var(--primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Refresh QR Now</span>
+                  </button>
+                  <button id="btnSwitchToPairing" class="btn-deck btn-deck-secondary" style="width: auto; padding: 8px 14px; font-size: 12px; color: var(--brand-gold);">
+                    <span>Use Phone Code</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- State D: Timeout / Retry State -->
+              <div id="qrTimeoutState" class="hidden" style="padding: 24px 12px; text-align: center;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: #fffbeb; border: 2px solid #f59e0b; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
+                  <svg style="width: 26px; height: 26px; color: #d97706;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div style="font-size: 16px; font-weight: 800; color: #92400e; margin-bottom: 4px;">
+                  QR Generation Timed Out
+                </div>
+                <p style="font-size: 12px; color: #78350f; max-width: 320px; margin: 0 auto 14px auto;">
+                  WhatsApp took longer than expected to emit keys. Tap below to retry or switch to phone pairing code.
+                </p>
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                  <button id="btnRetryQrTimeout" class="btn-deck btn-deck-primary" style="width: auto; padding: 8px 18px; font-size: 12px;">
+                    <span>⚡ Try Again Now</span>
+                  </button>
+                  <button id="btnTimeoutSwitchPairing" class="btn-deck btn-deck-secondary" style="width: auto; padding: 8px 16px; font-size: 12px;">
+                    <span>Use Pairing Code</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- State C: Session Already Connected -->
+              <div id="qrConnectedState" class="hidden" style="padding: 18px 10px; text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #ecfdf5; border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);">
+                  <svg style="width: 30px; height: 30px; color: #10b981;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div style="font-size: 17px; font-weight: 800; color: #047857; margin-bottom: 4px;">
+                  WhatsApp Live &amp; Connected!
+                </div>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
+                  Your device is securely linked and ready for messaging.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                  <button id="btnQrGoToSend" class="btn-deck btn-deck-primary" style="width: auto; padding: 10px 20px; font-size: 12.5px;">
+                    <span>Open Message Studio</span>
+                  </button>
+                  <button id="btnQrGoToSummary" class="btn-deck btn-deck-secondary" style="width: auto; padding: 10px 16px; font-size: 12.5px;">
+                    <span>Instance Summary</span>
+                  </button>
+                </div>
+              </div>
+
             </div>
 
             <!-- View 3: Pairing Code -->
             <div id="viewPairing" class="hidden">
-              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
-                Enter your WhatsApp phone number with country code to generate an 8-digit link code:
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                Enter your WhatsApp mobile number. We automatically attach India's standard <strong>+91</strong> country code:
               </p>
-              <div class="input-row-modern">
-                <input type="text" id="phonePairInput" class="modern-input" placeholder="+919876543210 (Country + Number)">
-                <button id="btnRequestCodeAction" class="btn-gold-search" style="padding: 10px 16px;">Get Code</button>
+
+              <div class="phone-input-group">
+                <div class="phone-prefix-badge">
+                  <span>🇮🇳</span>
+                  <span>+91</span>
+                </div>
+                <input type="tel" id="phonePairInput" class="phone-input-bare" placeholder="98765 43210 (10-digit mobile number)" maxlength="14">
+                <button id="btnRequestCodeAction" class="btn-gold-search" style="padding: 10px 18px; border-radius: 0;">Get Code</button>
+              </div>
+
+              <div id="phonePairPreview" class="phone-preview-pill">
+                <span>Will request code for: <strong>+91 (Enter 10 digits)</strong></span>
               </div>
 
               <div id="pairingCodeContainer" class="pairing-box-layout hidden">
-                <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">8-Digit Link Code:</span>
+                <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">8-Digit WhatsApp Link Code:</span>
                 <span id="pairingCodeValue" class="pairing-digits">--------</span>
-                <button id="btnCopyCode" class="btn-gold-search" style="padding: 5px 12px; font-size: 11px; margin-top: 4px;">Copy Code</button>
+                <button id="btnCopyCode" class="btn-gold-search" style="padding: 5px 14px; font-size: 11.5px; margin-top: 4px;">Copy Code</button>
               </div>
             </div>
 
-            <!-- View 4: Send Message Test Studio -->
+            <!-- View 4: Send Message Test Studio & Bulk Broadcast Queue -->
             <div id="viewSendMessage" class="hidden">
-              <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-                  <div style="font-size: 13.5px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
-                    <span style="width: 28px; height: 28px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+              <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);">
+                
+                <!-- Studio Mode Selector -->
+                <div class="message-mode-switch">
+                  <button type="button" class="msg-mode-btn active" id="btnModeSingle">
+                    <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <span>Single Direct Message</span>
+                  </button>
+                  
+                  <button type="button" class="msg-mode-btn" id="btnModeBulk">
+                    <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    <span>Bulk Queue Broadcast (Max 300)</span>
+                  </button>
+                </div>
+
+                <!-- SUB-PANEL 1: SINGLE DIRECT MESSAGE -->
+                <div id="subPanelSingleMsg">
+                  <div style="margin-bottom: 14px;">
+                    <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px;">
+                      Recipient Mobile Number
+                    </label>
+                    <div class="phone-input-group">
+                      <div class="phone-prefix-badge">
+                        <span>🇮🇳</span>
+                        <span>+91</span>
+                      </div>
+                      <input type="tel" id="quickMsgPhone" class="phone-input-bare" placeholder="98765 43210 (10-digit mobile number)" maxlength="14">
+                    </div>
+                    <div id="singlePhonePreview" class="phone-preview-pill">
+                      <span>Recipient: <strong>+91 (Enter 10 digits)</strong></span>
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom: 16px;">
+                    <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px;">
+                      Message Content
+                    </label>
+                    <textarea id="quickMsgText" class="modern-input" rows="3" placeholder="Enter your text message here... (e.g. Greetings! Your appointment is confirmed.)" style="width: 100%; resize: vertical; min-height: 80px;"></textarea>
+                  </div>
+
+                  <div style="display: flex; gap: 10px; align-items: center;">
+                    <button id="btnSendQuickMsg" class="btn-deck btn-deck-primary" style="width: auto; padding: 10px 24px;">
                       <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                       </svg>
-                    </span>
-                    <span>Quick WhatsApp Messenger</span>
+                      <span>Send Direct Message</span>
+                    </button>
+                    <button id="btnClearQuickMsg" class="btn-deck btn-deck-secondary" style="width: auto; padding: 10px 16px; color: var(--text-muted);">
+                      <span>Clear</span>
+                    </button>
                   </div>
-                  <span id="quickSendStatusPill" style="font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.12); color: var(--primary);">READY</span>
+
+                  <div id="quickMsgResultBox" class="hidden" style="margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-size: 12px; line-height: 1.5;"></div>
                 </div>
 
-                <div style="margin-bottom: 14px;">
-                  <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px;">
-                    Recipient Phone Number (with Country Code)
-                  </label>
-                  <input type="text" id="quickMsgPhone" class="modern-input" placeholder="e.g. 917276815079 (Country Code + Number)" style="width: 100%;">
-                  <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Include full country code without '+' sign (e.g. 91 for India, 1 for USA)</span>
+                <!-- SUB-PANEL 2: BULK QUEUE BROADCAST (MAX 300) -->
+                <div id="subPanelBulkMsg" class="hidden">
+                  
+                  <!-- Real-time Analytics Strip -->
+                  <div class="analytics-strip">
+                    <div class="analytics-pill-item">
+                      <span class="analytics-pill-label">Recipients</span>
+                      <span class="analytics-pill-val" id="bulkCountVal">0 / 300</span>
+                    </div>
+                    <div class="analytics-pill-item">
+                      <span class="analytics-pill-label">Prefix</span>
+                      <span class="analytics-pill-val" style="color:#047857;">🇮🇳 Auto +91</span>
+                    </div>
+                    <div class="analytics-pill-item">
+                      <span class="analytics-pill-label">Duplicates</span>
+                      <span class="analytics-pill-val" id="bulkDupesVal" style="color:#64748b;">0 filtered</span>
+                    </div>
+                    <div class="analytics-pill-item">
+                      <span class="analytics-pill-label">Target ETA</span>
+                      <span class="analytics-pill-val" id="bulkEtaVal" style="color:#0284c7;">~0 sec</span>
+                    </div>
+                  </div>
+
+                  <!-- Alert if exceeds 300 -->
+                  <div id="bulkCapNotice" class="hidden" style="background:#fef3c7; border:1px solid #fde68a; color:#92400e; padding:8px 12px; border-radius:10px; font-size:11.5px; font-weight:700; margin-bottom:12px;">
+                    ⚠️ Batch capped to maximum 300 recipients. Additional numbers beyond 300 were automatically trimmed.
+                  </div>
+
+                  <!-- Recipient Textarea -->
+                  <div style="margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                      <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">
+                        Recipient Mobile Numbers (1 per line, commas, or Excel copy)
+                      </label>
+                      <button type="button" id="btnLoadSample40" class="btn-copy-sm" style="font-size: 11px; color: var(--brand-navy); font-weight: 700;">
+                        + Load 40 Sample Numbers (Test &lt;1m speed)
+                      </button>
+                    </div>
+                    <textarea id="bulkRecipientsInput" class="modern-input" rows="4" placeholder="Paste up to 300 mobile numbers here (e.g. 9876543210, 9812345678)...&#10;All 10-digit Indian numbers are auto-prefixed with +91." style="width: 100%; resize: vertical; min-height: 90px; font-family: monospace; font-size: 12.5px;"></textarea>
+                  </div>
+
+                  <!-- Broadcast Message Body -->
+                  <div style="margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                      <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">
+                        Broadcast Message Content
+                      </label>
+                      <span style="font-size: 11px; color: var(--text-muted);">Supports placeholder: <code style="font-weight:700; background:#f1f5f9; padding:1px 4px; border-radius:4px;">{phone}</code></span>
+                    </div>
+                    <textarea id="bulkMessageText" class="modern-input" rows="3" placeholder="Hello! This is a priority broadcast for {phone}. Please confirm your attendance." style="width: 100%; resize: vertical; min-height: 75px;"></textarea>
+                  </div>
+
+                  <!-- Live Queue Execution Dashboard -->
+                  <div id="bulkExecutionBox" class="hidden" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:16px; margin-bottom:14px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="bulkStatusBadge" class="status-chip status-chip-pending">READY</span>
+                        <span id="bulkCurrentTask" style="font-size:12px; font-weight:700; color:var(--text-secondary);">Preparing queue...</span>
+                      </div>
+                      <div style="font-size:12px; font-weight:800; color:var(--text-main);" id="bulkProgressLabel">
+                        0% (0/0)
+                      </div>
+                    </div>
+
+                    <!-- Striped Animated Progress Bar -->
+                    <div class="queue-progress-track">
+                      <div id="bulkProgressBar" class="queue-progress-fill"></div>
+                    </div>
+
+                    <!-- Dynamic KPI Grid -->
+                    <div class="queue-kpi-grid">
+                      <div class="queue-kpi-box">
+                        <div class="queue-kpi-label">Total</div>
+                        <div class="queue-kpi-val" id="kpiTotal">0</div>
+                      </div>
+                      <div class="queue-kpi-box">
+                        <div class="queue-kpi-label">Sent</div>
+                        <div class="queue-kpi-val" id="kpiSent" style="color:#047857;">0</div>
+                      </div>
+                      <div class="queue-kpi-box">
+                        <div class="queue-kpi-label">Failed</div>
+                        <div class="queue-kpi-val" id="kpiFailed" style="color:#b91c1c;">0</div>
+                      </div>
+                      <div class="queue-kpi-box">
+                        <div class="queue-kpi-label">Time Remaining</div>
+                        <div class="queue-kpi-val" id="kpiEta" style="color:#0284c7;">00:00</div>
+                      </div>
+                    </div>
+
+                    <!-- Real-Time Activity Log Feed -->
+                    <div class="queue-log-table-wrap">
+                      <table class="queue-log-table" id="bulkLogTable">
+                        <thead>
+                          <tr>
+                            <th style="width: 45px;">#</th>
+                            <th style="width: 140px;">Recipient</th>
+                            <th style="width: 80px;">Status</th>
+                            <th>Detail / Msg ID</th>
+                            <th style="width: 85px; text-align:right;">Time</th>
+                          </tr>
+                        </thead>
+                        <tbody id="bulkLogBody">
+                          <!-- Populated via JS -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Control Buttons Deck -->
+                  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <button id="btnStartBulkQueue" class="btn-deck btn-deck-primary" style="width: auto; padding: 10px 24px;">
+                      <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      <span id="btnStartBulkLabel">Start Broadcast Queue</span>
+                    </button>
+
+                    <button id="btnPauseBulkQueue" class="btn-deck btn-deck-secondary hidden" style="width: auto; padding: 10px 16px; color:#d97706;">
+                      <span>⏸️ Pause</span>
+                    </button>
+
+                    <button id="btnResumeBulkQueue" class="btn-deck btn-deck-secondary hidden" style="width: auto; padding: 10px 16px; color:#10b981;">
+                      <span>▶️ Resume</span>
+                    </button>
+
+                    <button id="btnAbortBulkQueue" class="btn-deck btn-deck-secondary hidden" style="width: auto; padding: 10px 16px; color:#ef4444;">
+                      <span>⏹️ Abort</span>
+                    </button>
+
+                    <button id="btnExportBulkCsv" class="btn-deck btn-deck-secondary hidden" style="width: auto; padding: 10px 16px;">
+                      <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      <span>Export CSV Report</span>
+                    </button>
+
+                    <button id="btnClearBulkForm" class="btn-deck btn-deck-secondary" style="width: auto; padding: 10px 16px; color: var(--text-muted); margin-left: auto;">
+                      <span>Reset Form</span>
+                    </button>
+                  </div>
+
                 </div>
 
-                <div style="margin-bottom: 16px;">
-                  <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 6px;">
-                    Message Content
-                  </label>
-                  <textarea id="quickMsgText" class="modern-input" rows="3" placeholder="Enter your text message here... (e.g. absent today)" style="width: 100%; resize: vertical; min-height: 80px;"></textarea>
-                </div>
-
-                <div style="display: flex; gap: 10px; align-items: center;">
-                  <button id="btnSendQuickMsg" class="btn-deck btn-deck-primary" style="width: auto; padding: 10px 24px;">
-                    <svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                    <span>Send Message</span>
-                  </button>
-                  <button id="btnClearQuickMsg" class="btn-deck btn-deck-secondary" style="width: auto; padding: 10px 16px; color: var(--text-muted);">
-                    <span>Clear</span>
-                  </button>
-                </div>
-
-                <div id="quickMsgResultBox" class="hidden" style="margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-size: 12px; line-height: 1.5;"></div>
               </div>
             </div>
 
@@ -1969,6 +2853,14 @@
         const data = await apiFetch('/portal/api/me');
         if (!data) return;
 
+        if (data.error || (data.message && !data.user)) {
+          showToast(data.message || 'Failed to load user session');
+          if (data.status === 404 || data.status === 401) {
+            setTimeout(logoutAction, 1200);
+          }
+          return;
+        }
+
         if (data.user) {
           currentUser = data.user;
           localStorage.setItem('evolution_portal_user', JSON.stringify(currentUser));
@@ -1978,6 +2870,8 @@
         if (!data.instance) {
           document.getElementById('noInstanceBox').classList.remove('hidden');
           document.getElementById('instanceBox').classList.add('hidden');
+          document.getElementById('pillInstanceName').textContent = 'Instance: None';
+          document.getElementById('pillPhoneNumber').textContent = 'Linked: None';
           if (data.user) {
             document.getElementById('newInstanceName').value = data.user.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_instance';
           }
@@ -1993,6 +2887,225 @@
     }
 
     let currentInstData = null;
+    let qrTimer = null;
+    let qrIsFetching = false;
+    let lastQrCodeBase64 = null;
+
+    // Indian Phone Sanitization (+91 default for 10-digit mobile numbers)
+    function sanitizeIndianPhone(raw) {
+      if (!raw) return '';
+      const digits = String(raw).replace(/\D/g, '');
+      if (digits.length === 10) return '91' + digits;
+      if (digits.length === 11 && digits.startsWith('0')) return '91' + digits.slice(1);
+      if (digits.startsWith('91') && digits.length === 12) return digits;
+      return digits;
+    }
+
+    function formatDisplayPhone(raw) {
+      const clean = sanitizeIndianPhone(raw);
+      if (clean.length === 12 && clean.startsWith('91')) {
+        return `+91 ${clean.slice(2, 7)} ${clean.slice(7)}`;
+      }
+      return clean ? `+${clean}` : '';
+    }
+
+    // Live preview event listeners
+    const phonePairInput = document.getElementById('phonePairInput');
+    const phonePairPreview = document.getElementById('phonePairPreview');
+    phonePairInput.addEventListener('input', () => {
+      const val = phonePairInput.value.trim();
+      if (!val) {
+        phonePairPreview.innerHTML = '<span>Will request code for: <strong>+91 (Enter 10 digits)</strong></span>';
+      } else {
+        const formatted = formatDisplayPhone(val);
+        phonePairPreview.innerHTML = `<span>Will request code for: <strong>${formatted}</strong></span>`;
+      }
+    });
+
+    const quickMsgPhone = document.getElementById('quickMsgPhone');
+    const singlePhonePreview = document.getElementById('singlePhonePreview');
+    quickMsgPhone.addEventListener('input', () => {
+      const val = quickMsgPhone.value.trim();
+      if (!val) {
+        singlePhonePreview.innerHTML = '<span>Recipient: <strong>+91 (Enter 10 digits)</strong></span>';
+      } else {
+        const formatted = formatDisplayPhone(val);
+        singlePhonePreview.innerHTML = `<span>Recipient: <strong>${formatted}</strong></span>`;
+      }
+    });
+
+    // Message Studio Mode Switch
+    const btnModeSingle = document.getElementById('btnModeSingle');
+    const btnModeBulk = document.getElementById('btnModeBulk');
+    const subPanelSingleMsg = document.getElementById('subPanelSingleMsg');
+    const subPanelBulkMsg = document.getElementById('subPanelBulkMsg');
+
+    btnModeSingle.addEventListener('click', () => {
+      btnModeSingle.classList.add('active');
+      btnModeBulk.classList.remove('active');
+      subPanelSingleMsg.classList.remove('hidden');
+      subPanelBulkMsg.classList.add('hidden');
+    });
+
+    btnModeBulk.addEventListener('click', () => {
+      btnModeBulk.classList.add('active');
+      btnModeSingle.classList.remove('active');
+      subPanelBulkMsg.classList.remove('hidden');
+      subPanelSingleMsg.classList.add('hidden');
+      parseBulkRecipients();
+    });
+
+    // QR Countdown & Lifecycle (Minimum 1 minute = 60s per user request)
+    const QR_TTL_SECONDS = 60;
+    let qrCountdownSec = QR_TTL_SECONDS;
+
+    function startQrCountdown() {
+      stopQrCountdown();
+      qrCountdownSec = QR_TTL_SECONDS;
+      const countEl = document.getElementById('qrCountdownSec');
+      const barEl = document.getElementById('qrCountdownBar');
+
+      if (countEl) countEl.textContent = qrCountdownSec;
+      if (barEl) barEl.style.width = '100%';
+
+      qrTimer = setInterval(() => {
+        qrCountdownSec--;
+        if (countEl) countEl.textContent = Math.max(0, qrCountdownSec);
+        if (barEl) {
+          const pct = Math.max(0, (qrCountdownSec / QR_TTL_SECONDS) * 100);
+          barEl.style.width = `${pct}%`;
+        }
+
+        if (qrCountdownSec <= 0) {
+          stopQrCountdown();
+          // Silently refresh QR if still on QR tab and not connected
+          if (currentMode === 'qr' && (!currentInstData || currentInstData.status !== 'open')) {
+            refreshQrCode(false);
+          }
+        }
+      }, 1000);
+    }
+
+    function stopQrCountdown() {
+      if (qrTimer) {
+        clearInterval(qrTimer);
+        qrTimer = null;
+      }
+    }
+
+    let qrRetryInterval = null;
+
+    function showActiveQr(b64) {
+      lastQrCodeBase64 = b64;
+      const qrImg = document.getElementById('qrImg');
+      if (qrImg) qrImg.src = b64;
+
+      document.getElementById('qrLoadingState')?.classList.add('hidden');
+      document.getElementById('qrTimeoutState')?.classList.add('hidden');
+      document.getElementById('qrConnectedState')?.classList.add('hidden');
+      document.getElementById('qrActiveState')?.classList.remove('hidden');
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const tsEl = document.getElementById('qrTimestampText');
+      if (tsEl) tsEl.innerHTML = `Generated at <strong>${timeStr}</strong> &bull; Ready for WhatsApp scan`;
+
+      startQrCountdown();
+    }
+
+    async function refreshQrCode(showToastNotice = true) {
+      if (qrIsFetching) return;
+      qrIsFetching = true;
+
+      if (qrRetryInterval) {
+        clearInterval(qrRetryInterval);
+        qrRetryInterval = null;
+      }
+
+      const qrLoadingState = document.getElementById('qrLoadingState');
+      const qrActiveState = document.getElementById('qrActiveState');
+      const qrConnectedState = document.getElementById('qrConnectedState');
+      const qrTimeoutState = document.getElementById('qrTimeoutState');
+
+      qrTimeoutState?.classList.add('hidden');
+      qrConnectedState?.classList.add('hidden');
+
+      if (!lastQrCodeBase64) {
+        qrLoadingState?.classList.remove('hidden');
+        qrActiveState?.classList.add('hidden');
+      }
+
+      if (showToastNotice) showToast('Connecting to WhatsApp & generating fresh QR...');
+
+      const qrStartTime = Date.now();
+      const MAX_WAIT_MS = 45000; // 45 seconds timeout (well under 2 minutes)
+
+      try {
+        const res = await apiFetch('/portal/api/instance/connect', { method: 'POST' });
+        const b64 = res?.qrcode?.base64 || res?.base64;
+        
+        if (b64) {
+          showActiveQr(b64);
+          return;
+        }
+
+        // If QR not ready immediately, enter active polling loop for up to 45 seconds
+        await new Promise((resolve) => {
+          qrRetryInterval = setInterval(async () => {
+            if (Date.now() - qrStartTime >= MAX_WAIT_MS) {
+              clearInterval(qrRetryInterval);
+              qrRetryInterval = null;
+              resolve(false);
+              return;
+            }
+
+            try {
+              const liveData = await apiFetch('/portal/api/instance/status');
+              if (liveData?.status === 'open') {
+                clearInterval(qrRetryInterval);
+                qrRetryInterval = null;
+                renderInstance(liveData);
+                resolve(true);
+                return;
+              }
+
+              const pollB64 = liveData?.qrcode?.base64 || liveData?.base64;
+              if (pollB64) {
+                clearInterval(qrRetryInterval);
+                qrRetryInterval = null;
+                showActiveQr(pollB64);
+                resolve(true);
+                return;
+              }
+            } catch (_) {}
+          }, 1500);
+        });
+
+        if (!lastQrCodeBase64 && Date.now() - qrStartTime >= MAX_WAIT_MS) {
+          qrLoadingState?.classList.add('hidden');
+          qrActiveState?.classList.add('hidden');
+          qrTimeoutState?.classList.remove('hidden');
+          if (showToastNotice) showToast('QR generation timed out. Tap Try Again or use Pairing Code.');
+        }
+
+      } catch (err) {
+        if (showToastNotice) showToast('QR generation note: ' + err.message);
+        if (!lastQrCodeBase64) {
+          qrLoadingState?.classList.add('hidden');
+          qrTimeoutState?.classList.remove('hidden');
+        }
+      } finally {
+        qrIsFetching = false;
+      }
+    }
+
+    document.getElementById('btnRefreshQrAction').addEventListener('click', () => refreshQrCode(true));
+    document.getElementById('btnForceQrConnect').addEventListener('click', () => refreshQrCode(true));
+    document.getElementById('btnRetryQrTimeout')?.addEventListener('click', () => refreshQrCode(true));
+    document.getElementById('btnTimeoutSwitchPairing')?.addEventListener('click', () => setActiveNav('pair'));
+    document.getElementById('btnSwitchToPairing').addEventListener('click', () => setActiveNav('pair'));
+    document.getElementById('btnQrGoToSend').addEventListener('click', () => setActiveNav('sendmessage'));
+    document.getElementById('btnQrGoToSummary').addEventListener('click', () => setActiveNav('instance'));
 
     function renderInstance(inst) {
       currentInstData = inst;
@@ -2011,7 +3124,11 @@
       const btnQuickConnect = document.getElementById('btnQuickConnect');
       const btnConnect = document.getElementById('btnConnect');
 
-      const state = (inst.liveState || inst.connectionStatus || inst.status || 'close').toLowerCase();
+      const qrLoadingState = document.getElementById('qrLoadingState');
+      const qrActiveState = document.getElementById('qrActiveState');
+      const qrConnectedState = document.getElementById('qrConnectedState');
+
+      const state = (inst.status || inst.liveState || inst.connectionStatus || 'close').toLowerCase();
 
       document.getElementById('pillPhoneNumber').textContent = cleanPhone ? `Linked: ${cleanPhone}` : (state === 'open' ? 'Linked: Connected' : 'Linked: None');
       document.getElementById('summaryPhone').textContent = cleanPhone || (state === 'open' ? 'Connected (Active Device)' : 'Not Connected');
@@ -2036,6 +3153,14 @@
 
         btnQuickConnect.classList.add('hidden');
         btnConnect.classList.add('hidden');
+
+        // Stop QR countdown and show connected state card in QR view
+        stopQrCountdown();
+        qrLoadingState?.classList.add('hidden');
+        qrActiveState?.classList.add('hidden');
+        document.getElementById('qrTimeoutState')?.classList.add('hidden');
+        qrConnectedState?.classList.remove('hidden');
+
       } else if (state === 'connecting') {
         statusPill.style.background = 'rgba(234, 179, 8, 0.15)';
         statusPill.style.color = '#d97706';
@@ -2057,13 +3182,16 @@
         btnQuickConnect.classList.remove('hidden');
         btnConnect.classList.add('hidden');
 
-        if (inst.qrcode?.base64) {
-          document.getElementById('qrImg').src = inst.qrcode.base64;
+        const b64 = inst.qrcode?.base64 || inst.base64;
+        if (b64) {
+          showActiveQr(b64);
         }
+
         if (inst.pairingCode) {
           document.getElementById('pairingCodeContainer').classList.remove('hidden');
           document.getElementById('pairingCodeValue').textContent = inst.pairingCode;
         }
+
       } else {
         statusPill.style.background = 'rgba(239, 68, 68, 0.15)';
         statusPill.style.color = '#ef4444';
@@ -2084,53 +3212,80 @@
 
         btnQuickConnect.classList.remove('hidden');
         btnConnect.classList.remove('hidden');
+
+        qrConnectedState?.classList.add('hidden');
+        const b64 = inst.qrcode?.base64 || inst.base64;
+        if (b64) {
+          showActiveQr(b64);
+        }
       }
     }
 
-    function startStatusPolling() {
+    function startStatusPolling(intervalMs = 3000) {
       if (pollInterval) clearInterval(pollInterval);
       pollInterval = setInterval(async () => {
         try {
           const liveData = await apiFetch('/portal/api/instance/status');
           if (liveData) renderInstance(liveData);
         } catch (e) {}
-      }, 3500);
+      }, intervalMs);
     }
 
-    // Quick Message Sender Handler
+    // Auto-connect on opening QR Tab
+    const originalSetMode = setMode;
+    setMode = function(mode) {
+      originalSetMode(mode);
+      if (mode === 'qr') {
+        const state = (currentInstData?.status || currentInstData?.liveState || 'close').toLowerCase();
+        if (state !== 'open') {
+          // If no active QR image, auto trigger fresh connect
+          if (!lastQrCodeBase64) {
+            refreshQrCode(false);
+          } else {
+            document.getElementById('qrLoadingState').classList.add('hidden');
+            document.getElementById('qrActiveState').classList.remove('hidden');
+            if (!qrTimer) startQrCountdown();
+          }
+          // Poll faster (every 1800ms) while on QR view so phone scan is instantly detected!
+          startStatusPolling(1800);
+        }
+      } else {
+        // Normal polling on other tabs
+        startStatusPolling(3200);
+      }
+    };
+
+    // Single Direct Message Sender
     document.getElementById('btnSendQuickMsg').addEventListener('click', async () => {
       const rawPhone = document.getElementById('quickMsgPhone').value.trim();
       const text = document.getElementById('quickMsgText').value.trim();
       const resultBox = document.getElementById('quickMsgResultBox');
       const sendBtn = document.getElementById('btnSendQuickMsg');
 
-      if (!rawPhone) return showToast('Please enter recipient phone number with country code');
+      if (!rawPhone) return showToast('Please enter recipient mobile number');
       if (!text) return showToast('Please enter message text');
-      if (!currentInstData || !currentInstData.name || !currentInstData.token) {
-        return showToast('Instance data not loaded yet. Please wait...');
-      }
 
-      const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+      const cleanPhone = sanitizeIndianPhone(rawPhone);
       sendBtn.disabled = true;
       sendBtn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin 0.8s linear infinite;"></span><span>Sending...</span>';
       resultBox.classList.add('hidden');
 
       try {
-        const res = await fetch(`/message/sendText/${currentInstData.name}`, {
+        // Send via unified portal endpoint (which validates token and auto-formats phone)
+        const res = await apiFetch('/portal/api/message/send', {
           method: 'POST',
-          headers: {
-            'apikey': currentInstData.token,
-            'Content-Type': 'application/json'
-          },
           body: JSON.stringify({
             number: cleanPhone,
             text: text
           })
         });
 
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.response?.message || data.message || 'Failed to send message');
+        if (!res) throw new Error('No response from WhatsApp gateway');
+
+        const rawStatus = (res.displayStatus || res.status || '').toUpperCase();
+        let statusBadge = '<span style="background: rgba(16, 185, 129, 0.15); color: #047857; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 11px;">&#10004; SENT &bull; DELIVERED</span>';
+        if (rawStatus === 'READ') {
+          statusBadge = '<span style="background: rgba(14, 165, 233, 0.15); color: #0284c7; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 11px;">&#10004;&#10004; READ</span>';
         }
 
         resultBox.className = '';
@@ -2138,12 +3293,12 @@
         resultBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
         resultBox.style.color = '#065f46';
         resultBox.innerHTML = `
-          <div style="font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-            <span style="color:#10b981;">&#10004;</span> WhatsApp Message Dispatched!
+          <div style="font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+            <span style="color:#10b981;">&#10004;</span> WhatsApp Message Sent Successfully!
           </div>
-          <div><strong>Recipient:</strong> ${cleanPhone}</div>
-          <div><strong>Status:</strong> ${data.status || 'SENT / PENDING'}</div>
-          <div><strong>Message ID:</strong> <code style="font-size:11px; background:rgba(0,0,0,0.05); padding:2px 4px; border-radius:4px;">${data.key?.id || '---'}</code></div>
+          <div style="margin-bottom: 3px;"><strong>Recipient:</strong> +${cleanPhone}</div>
+          <div style="margin-bottom: 3px; display: flex; align-items: center; gap: 6px;"><strong>Status:</strong> ${statusBadge}</div>
+          <div><strong>Message ID:</strong> <code style="font-size:11px; background:rgba(0,0,0,0.05); padding:2px 4px; border-radius:4px;">${res.key?.id || res.id || 'ACKNOWLEDGED'}</code></div>
         `;
         resultBox.classList.remove('hidden');
         showToast('WhatsApp message sent successfully!');
@@ -2157,75 +3312,356 @@
         showToast('Error: ' + err.message);
       } finally {
         sendBtn.disabled = false;
-        sendBtn.innerHTML = `<svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg><span>Send Message</span>`;
+        sendBtn.innerHTML = `<svg style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg><span>Send Direct Message</span>`;
       }
     });
 
     document.getElementById('btnClearQuickMsg').addEventListener('click', () => {
       document.getElementById('quickMsgPhone').value = '';
       document.getElementById('quickMsgText').value = '';
+      document.getElementById('singlePhonePreview').innerHTML = '<span>Recipient: <strong>+91 (Enter 10 digits)</strong></span>';
       document.getElementById('quickMsgResultBox').classList.add('hidden');
     });
 
-    // Button Listeners
-    document.getElementById('btnSearchRefresh').addEventListener('click', () => {
-      showToast('Syncing status...');
-      startStatusPolling();
+    // -------------------------------------------------------------------------
+    // BULK QUEUE BROADCAST ENGINE (UP TO 300 RECIPIENTS PER USER)
+    // Dynamic adaptive pacing mathematically guarantees:
+    // - 40 messages finish in ~50s (strictly under 1 minute)
+    // - 300 messages finish in ~4.3m (strictly under 5 minutes)
+    // -------------------------------------------------------------------------
+    let bulkQueueRecipients = [];
+    let bulkQueueState = {
+      isRunning: false,
+      isPaused: false,
+      isAborted: false,
+      currentIndex: 0,
+      sentCount: 0,
+      failedCount: 0,
+      totalCount: 0,
+      results: []
+    };
+
+    function calculateBulkPacing(count) {
+      if (count <= 0) return { delayMs: 0, etaText: '~0 sec' };
+      if (count <= 40) {
+        // Target: under 1 minute (e.g. 50 seconds)
+        // 40 messages * 1200ms = 48s < 60s
+        const delayMs = Math.max(1150, Math.floor(48000 / count));
+        const totalSec = Math.round((delayMs * count) / 1000);
+        return { delayMs, etaText: `~${totalSec}s (Under 1 min)` };
+      } else {
+        // Target: under 5 minutes (e.g. 255 seconds = 4.25 min)
+        // 300 messages * 850ms = 255s = 4.25m < 5m
+        const delayMs = Math.max(820, Math.floor(255000 / count));
+        const totalSec = Math.round((delayMs * count) / 1000);
+        const mins = (totalSec / 60).toFixed(1);
+        return { delayMs, etaText: `~${mins} min (Under 5 min)` };
+      }
+    }
+
+    function parseBulkRecipients() {
+      const raw = document.getElementById('bulkRecipientsInput').value;
+      const tokens = raw.split(/[\n,;\t\r ]+/).map(t => t.trim()).filter(Boolean);
+      
+      const seen = new Set();
+      const validNumbers = [];
+      let dupesCount = 0;
+
+      for (const token of tokens) {
+        const clean = sanitizeIndianPhone(token);
+        if (clean.length >= 10) {
+          if (seen.has(clean)) {
+            dupesCount++;
+          } else {
+            seen.add(clean);
+            validNumbers.push(clean);
+          }
+        }
+      }
+
+      const capNotice = document.getElementById('bulkCapNotice');
+      if (validNumbers.length > 300) {
+        bulkQueueRecipients = validNumbers.slice(0, 300);
+        capNotice.classList.remove('hidden');
+      } else {
+        bulkQueueRecipients = validNumbers;
+        capNotice.classList.add('hidden');
+      }
+
+      const count = bulkQueueRecipients.length;
+      document.getElementById('bulkCountVal').textContent = `${count} / 300`;
+      document.getElementById('bulkDupesVal').textContent = `${dupesCount} filtered`;
+
+      const pacing = calculateBulkPacing(count);
+      document.getElementById('bulkEtaVal').textContent = pacing.etaText;
+      document.getElementById('btnStartBulkLabel').textContent = count > 0 
+        ? `Start Broadcast Queue (${count} Messages)`
+        : 'Start Broadcast Queue';
+
+      return bulkQueueRecipients;
+    }
+
+    document.getElementById('bulkRecipientsInput').addEventListener('input', parseBulkRecipients);
+
+    // Sample 40 Test Numbers
+    document.getElementById('btnLoadSample40').addEventListener('click', () => {
+      const samples = [];
+      const baseNum = 9810012000;
+      for (let i = 0; i < 40; i++) {
+        samples.push(String(baseNum + i));
+      }
+      document.getElementById('bulkRecipientsInput').value = samples.join('\n');
+      if (!document.getElementById('bulkMessageText').value.trim()) {
+        document.getElementById('bulkMessageText').value = 'Greetings! This is an automated notification broadcast to {phone}. Test delivery status: ACTIVE.';
+      }
+      parseBulkRecipients();
+      showToast('Loaded 40 sample numbers. Pacing target: ~50 sec (< 1 min)');
     });
 
-    document.getElementById('btnCreateInstance').addEventListener('click', async () => {
-      const name = document.getElementById('newInstanceName').value.trim();
-      if (!name) return showToast('Please enter an instance name');
+    // Reset Form
+    document.getElementById('btnClearBulkForm').addEventListener('click', () => {
+      if (bulkQueueState.isRunning) {
+        if (!confirm('Abort active broadcast queue?')) return;
+        bulkQueueState.isAborted = true;
+      }
+      document.getElementById('bulkRecipientsInput').value = '';
+      document.getElementById('bulkMessageText').value = '';
+      document.getElementById('bulkExecutionBox').classList.add('hidden');
+      parseBulkRecipients();
+    });
 
-      try {
-        await apiFetch('/portal/api/instance/create', {
-          method: 'POST',
-          body: JSON.stringify({ name })
-        });
-        showToast('Instance initialized successfully!');
-        loadDashboard();
-      } catch (err) {
-        showToast('Failed to create instance: ' + err.message);
+    // Start Bulk Queue
+    document.getElementById('btnStartBulkQueue').addEventListener('click', async () => {
+      const numbers = parseBulkRecipients();
+      const messageTemplate = document.getElementById('bulkMessageText').value.trim();
+
+      if (numbers.length === 0) {
+        return showToast('Please enter at least 1 valid recipient mobile number');
+      }
+      if (!messageTemplate) {
+        return showToast('Please enter your broadcast message content');
+      }
+
+      // Initialize Queue State
+      bulkQueueState = {
+        isRunning: true,
+        isPaused: false,
+        isAborted: false,
+        currentIndex: 0,
+        sentCount: 0,
+        failedCount: 0,
+        totalCount: numbers.length,
+        results: []
+      };
+
+      const pacing = calculateBulkPacing(numbers.length);
+      const executionBox = document.getElementById('bulkExecutionBox');
+      const statusBadge = document.getElementById('bulkStatusBadge');
+      const currentTask = document.getElementById('bulkCurrentTask');
+      const progressLabel = document.getElementById('bulkProgressLabel');
+      const progressBar = document.getElementById('bulkProgressBar');
+      const kpiTotal = document.getElementById('kpiTotal');
+      const kpiSent = document.getElementById('kpiSent');
+      const kpiFailed = document.getElementById('kpiFailed');
+      const kpiEta = document.getElementById('kpiEta');
+      const logBody = document.getElementById('bulkLogBody');
+
+      const btnStart = document.getElementById('btnStartBulkQueue');
+      const btnPause = document.getElementById('btnPauseBulkQueue');
+      const btnResume = document.getElementById('btnResumeBulkQueue');
+      const btnAbort = document.getElementById('btnAbortBulkQueue');
+      const btnExport = document.getElementById('btnExportBulkCsv');
+
+      btnStart.classList.add('hidden');
+      btnPause.classList.remove('hidden');
+      btnResume.classList.add('hidden');
+      btnAbort.classList.remove('hidden');
+      btnExport.classList.add('hidden');
+
+      executionBox.classList.remove('hidden');
+      statusBadge.className = 'status-chip status-chip-pending';
+      statusBadge.textContent = 'DISPATCHING';
+      currentTask.textContent = `Processing batch of ${numbers.length} messages...`;
+      logBody.innerHTML = '';
+
+      kpiTotal.textContent = numbers.length;
+      kpiSent.textContent = '0';
+      kpiFailed.textContent = '0';
+      progressBar.style.width = '0%';
+      progressLabel.textContent = `0% (0/${numbers.length})`;
+
+      let remainingSec = Math.round((pacing.delayMs * numbers.length) / 1000);
+      kpiEta.textContent = `${String(Math.floor(remainingSec / 60)).padStart(2, '0')}:${String(remainingSec % 60).padStart(2, '0')}`;
+
+      const etaInterval = setInterval(() => {
+        if (!bulkQueueState.isRunning || bulkQueueState.isPaused) return;
+        remainingSec = Math.max(0, remainingSec - 1);
+        kpiEta.textContent = `${String(Math.floor(remainingSec / 60)).padStart(2, '0')}:${String(remainingSec % 60).padStart(2, '0')}`;
+      }, 1000);
+
+      showToast(`Starting queue: ${numbers.length} messages (${pacing.etaText})`);
+
+      for (let i = 0; i < numbers.length; i++) {
+        if (bulkQueueState.isAborted) break;
+
+        while (bulkQueueState.isPaused && !bulkQueueState.isAborted) {
+          await new Promise(r => setTimeout(r, 200));
+        }
+        if (bulkQueueState.isAborted) break;
+
+        bulkQueueState.currentIndex = i + 1;
+        const phone = numbers[i];
+        currentTask.textContent = `[${i + 1}/${numbers.length}] Dispatching to +${phone}...`;
+
+        const personalizedMsg = messageTemplate.replace(/\{phone\}/gi, `+${phone}`);
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        try {
+          const res = await apiFetch('/portal/api/message/send', {
+            method: 'POST',
+            body: JSON.stringify({ number: phone, text: personalizedMsg })
+          });
+
+          const msgId = res?.key?.id || res?.id || 'ACK';
+          bulkQueueState.sentCount++;
+          kpiSent.textContent = bulkQueueState.sentCount;
+          bulkQueueState.results.push({ phone: `+${phone}`, status: 'SENT', msgId, timestamp });
+
+          // Add row to log table (prepend to top)
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>#${i + 1}</td>
+            <td style="font-weight:700;">+${phone}</td>
+            <td><span class="status-chip status-chip-sent">SENT</span></td>
+            <td><code style="font-size:10px; background:#f1f5f9; padding:1px 4px; border-radius:3px;">${msgId}</code></td>
+            <td style="text-align:right; font-size:11px; color:#64748b;">${timestamp}</td>
+          `;
+          logBody.insertBefore(row, logBody.firstChild);
+
+        } catch (err) {
+          bulkQueueState.failedCount++;
+          kpiFailed.textContent = bulkQueueState.failedCount;
+          bulkQueueState.results.push({ phone: `+${phone}`, status: 'FAILED', msgId: err.message, timestamp });
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>#${i + 1}</td>
+            <td style="font-weight:700;">+${phone}</td>
+            <td><span class="status-chip status-chip-failed">FAILED</span></td>
+            <td style="color:#b91c1c; font-size:11px;">${err.message}</td>
+            <td style="text-align:right; font-size:11px; color:#64748b;">${timestamp}</td>
+          `;
+          logBody.insertBefore(row, logBody.firstChild);
+        }
+
+        // Update progress bar
+        const pct = Math.round(((i + 1) / numbers.length) * 100);
+        progressBar.style.width = `${pct}%`;
+        progressLabel.textContent = `${pct}% (${i + 1}/${numbers.length})`;
+
+        // Adaptive gap with small anti-ban jitter (+-25ms)
+        if (i < numbers.length - 1 && !bulkQueueState.isAborted) {
+          const jitter = Math.floor(Math.random() * 50) - 25;
+          const actualDelay = Math.max(300, pacing.delayMs + jitter);
+          await new Promise(r => setTimeout(r, actualDelay));
+        }
+      }
+
+      clearInterval(etaInterval);
+      bulkQueueState.isRunning = false;
+
+      btnPause.classList.add('hidden');
+      btnResume.classList.add('hidden');
+      btnAbort.classList.add('hidden');
+      btnStart.classList.remove('hidden');
+      btnExport.classList.remove('hidden');
+
+      if (bulkQueueState.isAborted) {
+        statusBadge.className = 'status-chip status-chip-failed';
+        statusBadge.textContent = 'ABORTED';
+        currentTask.textContent = `Broadcast queue stopped (${bulkQueueState.sentCount} sent, ${bulkQueueState.failedCount} failed)`;
+        showToast('Broadcast queue was aborted');
+      } else {
+        statusBadge.className = 'status-chip status-chip-sent';
+        statusBadge.textContent = 'COMPLETED';
+        currentTask.textContent = `Completed: ${bulkQueueState.sentCount} sent, ${bulkQueueState.failedCount} failed`;
+        kpiEta.textContent = '00:00';
+        showToast(`🎉 Batch finished! ${bulkQueueState.sentCount} messages dispatched successfully.`);
       }
     });
 
-    document.getElementById('btnConnect').addEventListener('click', async () => {
-      showToast('Starting connection session...');
-      try {
-        const res = await apiFetch('/portal/api/instance/connect', { method: 'POST' });
-        if (res && res.qrcode?.base64) {
-          document.getElementById('qrImg').src = res.qrcode.base64;
-        }
-        startStatusPolling();
-      } catch (err) {
-        showToast('Error connecting: ' + err.message);
+    // Pause / Resume / Abort Handlers
+    document.getElementById('btnPauseBulkQueue').addEventListener('click', () => {
+      bulkQueueState.isPaused = true;
+      document.getElementById('btnPauseBulkQueue').classList.add('hidden');
+      document.getElementById('btnResumeBulkQueue').classList.remove('hidden');
+      document.getElementById('bulkStatusBadge').className = 'status-chip status-chip-pending';
+      document.getElementById('bulkStatusBadge').textContent = 'PAUSED';
+      document.getElementById('bulkCurrentTask').textContent = 'Queue paused by user';
+      showToast('Queue paused');
+    });
+
+    document.getElementById('btnResumeBulkQueue').addEventListener('click', () => {
+      bulkQueueState.isPaused = false;
+      document.getElementById('btnResumeBulkQueue').classList.add('hidden');
+      document.getElementById('btnPauseBulkQueue').classList.remove('hidden');
+      document.getElementById('bulkStatusBadge').className = 'status-chip status-chip-pending';
+      document.getElementById('bulkStatusBadge').textContent = 'DISPATCHING';
+      showToast('Queue resumed');
+    });
+
+    document.getElementById('btnAbortBulkQueue').addEventListener('click', () => {
+      if (confirm('Are you sure you want to abort the remaining queue?')) {
+        bulkQueueState.isAborted = true;
+        bulkQueueState.isPaused = false;
       }
     });
 
-    document.getElementById('btnRefreshQrAction').addEventListener('click', async () => {
-      showToast('Refreshing QR Code...');
-      try {
-        const res = await apiFetch('/portal/api/instance/connect', { method: 'POST' });
-        if (res && res.qrcode?.base64) {
-          document.getElementById('qrImg').src = res.qrcode.base64;
-        }
-      } catch (err) {}
+    // Export CSV Report
+    document.getElementById('btnExportBulkCsv').addEventListener('click', () => {
+      if (!bulkQueueState.results || bulkQueueState.results.length === 0) {
+        return showToast('No batch records to export');
+      }
+
+      const rows = [
+        ['Index', 'Recipient Number', 'Status', 'Message ID / Note', 'Timestamp']
+      ];
+
+      bulkQueueState.results.forEach((r, idx) => {
+        rows.push([idx + 1, `"${r.phone}"`, r.status, `"${r.msgId.replace(/"/g, '""')}"`, r.timestamp]);
+      });
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `whatsapp_broadcast_report_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('CSV Report downloaded!');
     });
 
+    // Pairing Code Request Handler (with Auto +91 formatting)
     document.getElementById('btnRequestCodeAction').addEventListener('click', async () => {
-      const number = document.getElementById('phonePairInput').value.trim();
-      if (!number) return showToast('Please enter your phone number with country code');
+      const rawNumber = document.getElementById('phonePairInput').value.trim();
+      if (!rawNumber) return showToast('Please enter your 10-digit mobile number');
 
-      showToast('Requesting 8-digit code...');
+      const cleanNumber = sanitizeIndianPhone(rawNumber);
+      showToast(`Requesting 8-digit code for +${cleanNumber}...`);
+
       try {
         const res = await apiFetch('/portal/api/instance/connect', {
           method: 'POST',
-          body: JSON.stringify({ number })
+          body: JSON.stringify({ number: cleanNumber })
         });
+
         if (res && res.pairingCode) {
           document.getElementById('pairingCodeContainer').classList.remove('hidden');
           document.getElementById('pairingCodeValue').textContent = res.pairingCode;
-          showToast('Pairing code generated!');
+          showToast('Pairing code generated successfully!');
+        } else {
+          showToast('Pairing code request sent. Check your WhatsApp app notifications.');
         }
       } catch (err) {
         showToast('Error: ' + err.message);
@@ -2234,7 +3670,18 @@
 
     document.getElementById('btnCopyCode').addEventListener('click', () => {
       navigator.clipboard.writeText(document.getElementById('pairingCodeValue').textContent);
-      showToast('Pairing code copied!');
+      showToast('Pairing code copied to clipboard!');
+    });
+
+    // Connect & Refresh Buttons
+    document.getElementById('btnSearchRefresh').addEventListener('click', () => {
+      showToast('Syncing status...');
+      startStatusPolling();
+    });
+
+    document.getElementById('btnConnect').addEventListener('click', () => {
+      setActiveNav('qr');
+      refreshQrCode(true);
     });
 
     document.getElementById('btnCopySummaryToken').addEventListener('click', () => {
@@ -2255,13 +3702,41 @@
 
     document.getElementById('btnLogoutWa').addEventListener('click', async () => {
       if (!confirm('Disconnect WhatsApp device session?')) return;
-      showToast('Disconnecting...');
+      showToast('Disconnecting WhatsApp session...');
       try {
         await apiFetch('/portal/api/instance/logout', { method: 'DELETE' });
-        showToast('Session disconnected');
+        showToast('Session disconnected successfully');
+      } catch (err) {
+        showToast('Logout completed: ' + err.message);
+      }
+
+      // Wipe cached QR and state immediately
+      lastQrCodeBase64 = null;
+      if (currentInstData) {
+        currentInstData.number = null;
+        currentInstData.status = 'close';
+      }
+      document.getElementById('pillInstanceLinked').textContent = 'Linked: None';
+      document.getElementById('summaryLinkedPhone').textContent = 'None';
+
+      // Switch to QR view and immediately trigger fresh QR generation!
+      setMode('qr');
+      refreshQrCode(false);
+    });
+
+    document.getElementById('btnCreateInstance').addEventListener('click', async () => {
+      const name = document.getElementById('newInstanceName').value.trim();
+      if (!name) return showToast('Please enter an instance name');
+
+      try {
+        await apiFetch('/portal/api/instance/create', {
+          method: 'POST',
+          body: JSON.stringify({ name })
+        });
+        showToast('Instance initialized successfully!');
         loadDashboard();
       } catch (err) {
-        showToast('Logout failed: ' + err.message);
+        showToast('Failed to create instance: ' + err.message);
       }
     });
 

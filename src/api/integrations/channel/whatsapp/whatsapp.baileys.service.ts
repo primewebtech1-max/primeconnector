@@ -92,6 +92,7 @@ import { useMultiFileAuthStateRedisDb } from '@utils/use-multi-file-auth-state-r
 import axios from 'axios';
 import makeWASocket, {
   AnyMessageContent,
+  Browsers,
   BufferedEventData,
   BufferJSON,
   CacheStore,
@@ -139,6 +140,7 @@ import { createHash } from 'crypto';
 import EventEmitter2 from 'eventemitter2';
 import ffmpeg from 'fluent-ffmpeg';
 import FormData from 'form-data';
+import { existsSync, readFileSync } from 'fs';
 import Long from 'long';
 import mimeTypes from 'mime-types';
 import NodeCache from 'node-cache';
@@ -457,8 +459,12 @@ export class BaileysStartupService extends ChannelStartupService {
         }
 
         this.eventEmitter.emit('logout.instance', this.instance.name, 'inner');
-        this.client?.ws?.close();
-        this.client.end(new Error('Close connection'));
+        try {
+          this.client?.ws?.close?.();
+          this.client?.end?.(new Error('Close connection'));
+        } catch (e: any) {
+          this.logger.warn(`Error closing connection: ${e?.message || e}`);
+        }
 
         this.sendDataWebhook(Events.CONNECTION_UPDATE, { instance: this.instance.name, ...this.stateConnection });
       }
@@ -573,22 +579,210 @@ export class BaileysStartupService extends ChannelStartupService {
     }
   }
 
+  // Static cache for dynamic proxy lists (ProxyScrape, GitHub mirror)
+  private static dynamicProxyCache: { url: string; proxies: string[]; fetchedAt: number } = {
+    url: '',
+    proxies: [],
+    fetchedAt: 0,
+  };
+
+  public activeProxyUrl: string | null = null;
+
+  private async fetchDynamicProxyList(url: string): Promise<string[]> {
+    const now = Date.now();
+    // Cache for 3 minutes to avoid rate-limiting public proxy endpoints
+    if (
+      BaileysStartupService.dynamicProxyCache.url === url &&
+      BaileysStartupService.dynamicProxyCache.proxies.length > 0 &&
+      now - BaileysStartupService.dynamicProxyCache.fetchedAt < 180_000
+    ) {
+      return BaileysStartupService.dynamicProxyCache.proxies;
+    }
+
+    try {
+      this.logger.info(`Fetching live proxies from: ${url}`);
+      const res = await axios.get(url, { timeout: 10_000 });
+      const raw = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+      const lines = raw
+        .split(/\r?\n/)
+        .map((l: string) => l.trim())
+        .filter((l: string) => l.length > 0 && !l.startsWith('#'));
+
+      const proxies: string[] = [];
+      for (const line of lines) {
+        if (/^[a-zA-Z0-9+-.]+:\/\//.test(line)) {
+          proxies.push(line);
+        } else if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+$/.test(line)) {
+          const proto = this.localProxy?.protocol || 'http';
+          proxies.push(`${proto}://${line}`);
+        }
+      }
+
+      if (proxies.length > 0) {
+        BaileysStartupService.dynamicProxyCache = {
+          url,
+          proxies,
+          fetchedAt: now,
+        };
+        this.logger.info(`Loaded ${proxies.length} proxies from dynamic list`);
+        return proxies;
+      }
+    } catch (error: any) {
+      this.logger.error(`Failed to fetch dynamic proxy list: ${error?.message || error}`);
+      if (BaileysStartupService.dynamicProxyCache.proxies.length > 0) {
+        return BaileysStartupService.dynamicProxyCache.proxies;
+      }
+    }
+    return [];
+  }
+
+  private async resolveProxyOptions(): Promise<{ agent?: any; fetchAgent?: any }> {
+    this.activeProxyUrl = null;
+    if (!this.localProxy?.enabled) {
+      return {};
+    }
+
+    const host = (this.localProxy.host || '').trim();
+    if (!host) {
+      return {};
+    }
+
+    this.logger.info(`Configuring proxy for WhatsApp session: ${host}`);
+
+    // Priority 1: Custom priority proxy list from proxies.txt or PROXY_LIST env
+    try {
+      let priorityProxies: string[] = [];
+      const envProxyList = process.env.PROXY_LIST;
+      if (envProxyList && envProxyList.trim().length > 0) {
+        priorityProxies = envProxyList
+          .split(/[,;\r\n]+/)
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0 && !l.startsWith('#'));
+      }
+
+      if (priorityProxies.length === 0) {
+        const proxiesFilePath = join(process.cwd(), 'proxies.txt');
+        if (existsSync(proxiesFilePath)) {
+          priorityProxies = readFileSync(proxiesFilePath, 'utf-8')
+            .split(/\r?\n/)
+            .map((l) => l.trim())
+            .filter((l) => l.length > 0 && !l.startsWith('#'));
+        }
+      }
+
+      if (priorityProxies.length > 0) {
+        const rand = Math.floor(Math.random() * priorityProxies.length);
+        const chosen = priorityProxies[rand];
+        this.activeProxyUrl = chosen;
+        this.logger.info(
+          `[Priority Proxy List] Routing WhatsApp connection via: ${chosen} (1 of ${priorityProxies.length} proxies)`,
+        );
+        return {
+          agent: makeProxyAgent(chosen),
+          fetchAgent: makeProxyAgentUndici(chosen),
+        };
+      }
+    } catch (e: any) {
+      this.logger.error(`Error reading priority proxy list: ${e?.message || e}`);
+    }
+
+    // Case 1: Dynamic Proxy List (ProxyScrape, GitHub mirror, etc.)
+    const isDynamicList =
+      host.includes('proxyscrape') ||
+      host.includes('free-proxy-list') ||
+      host.includes('raw.githubusercontent.com') ||
+      host.includes('display_proxies');
+
+    if (isDynamicList) {
+      try {
+        const list = await this.fetchDynamicProxyList(host);
+        if (list.length > 0) {
+          const rand = Math.floor(Math.random() * list.length);
+          const chosen = list[rand];
+          this.activeProxyUrl = chosen;
+          this.logger.info(`[ProxyScrape] Routing WhatsApp connection via: ${chosen}`);
+          return {
+            agent: makeProxyAgent(chosen),
+            fetchAgent: makeProxyAgentUndici(chosen),
+          };
+        }
+      } catch (err: any) {
+        this.logger.error(`Error applying ProxyScrape proxy: ${err?.message || err}`);
+      }
+    }
+
+    // Case 2: Full Proxy URL (e.g. socks5://1.2.3.4:1080 or http://user:pass@host:port)
+    if (/^[a-zA-Z0-9+-.]+:\/\//.test(host)) {
+      try {
+        this.activeProxyUrl = host;
+        this.logger.info(`[URL Proxy] Routing WhatsApp connection via: ${host}`);
+        return {
+          agent: makeProxyAgent(host),
+          fetchAgent: makeProxyAgentUndici(host),
+        };
+      } catch (err: any) {
+        this.logger.error(`Error applying URL proxy: ${err?.message || err}`);
+      }
+    }
+
+    // Case 3: Standard Residential / Datacenter Proxy (host, port, protocol, user, pass)
+    try {
+      const proto = this.localProxy.protocol || 'http';
+      this.logger.info(
+        `[Standard Proxy] Routing WhatsApp connection via: ${proto}://${this.localProxy.host}:${this.localProxy.port || '80'}`,
+      );
+      return {
+        agent: makeProxyAgent({
+          host: this.localProxy.host,
+          port: this.localProxy.port,
+          protocol: this.localProxy.protocol,
+          username: this.localProxy.username,
+          password: this.localProxy.password,
+        }),
+        fetchAgent: makeProxyAgentUndici({
+          host: this.localProxy.host,
+          port: this.localProxy.port,
+          protocol: this.localProxy.protocol,
+          username: this.localProxy.username,
+          password: this.localProxy.password,
+        }),
+      };
+    } catch (err: any) {
+      this.logger.error(`Error applying standard proxy: ${err?.message || err}`);
+    }
+
+    return {};
+  }
+
   private async createClient(number?: string): Promise<WASocket> {
     this.instance.authState = await this.defineAuthState();
+
+    if (
+      !this.instance.qrcode ||
+      this.instance.qrcode.count >= (this.configService.get<QrCode>('QRCODE')?.LIMIT || 30)
+    ) {
+      this.instance.qrcode = { count: 0 };
+    }
 
     const session = this.configService.get<ConfigSessionPhone>('CONFIG_SESSION_PHONE');
 
     let browserOptions = {};
 
-    if (number || this.phoneNumber) {
+    if (number) {
       this.phoneNumber = number;
 
       this.logger.info(`Phone number: ${number}`);
     } else {
-      const browser: WABrowserDescription = [session.CLIENT, session.NAME, release()];
+      this.phoneNumber = null;
+      let browser: WABrowserDescription;
+      if (session?.CLIENT && session.CLIENT !== 'Evolution API' && session.CLIENT !== 'PrimeConnector') {
+        browser = [session.CLIENT, session.NAME, release()];
+      } else {
+        browser = Browsers.ubuntu('Chrome');
+      }
       browserOptions = { browser };
 
-      this.logger.info(`Browser: ${browser}`);
+      this.logger.info(`Browser: ${browser.join(' - ')}`);
     }
 
     const baileysVersion = await fetchLatestWaWebVersion({});
@@ -599,41 +793,8 @@ export class BaileysStartupService extends ChannelStartupService {
 
     this.logger.info(`Group Ignore: ${this.localSettings.groupsIgnore}`);
 
-    let options;
-
-    if (this.localProxy?.enabled) {
-      this.logger.info('Proxy enabled: ' + this.localProxy?.host);
-
-      if (this.localProxy?.host?.includes('proxyscrape')) {
-        try {
-          const response = await axios.get(this.localProxy?.host);
-          const text = response.data;
-          const proxyUrls = text.split('\r\n');
-          const rand = Math.floor(Math.random() * Math.floor(proxyUrls.length));
-          const proxyUrl = 'http://' + proxyUrls[rand];
-          options = { agent: makeProxyAgent(proxyUrl), fetchAgent: makeProxyAgentUndici(proxyUrl) };
-        } catch {
-          this.localProxy.enabled = false;
-        }
-      } else {
-        options = {
-          agent: makeProxyAgent({
-            host: this.localProxy.host,
-            port: this.localProxy.port,
-            protocol: this.localProxy.protocol,
-            username: this.localProxy.username,
-            password: this.localProxy.password,
-          }),
-          fetchAgent: makeProxyAgentUndici({
-            host: this.localProxy.host,
-            port: this.localProxy.port,
-            protocol: this.localProxy.protocol,
-            username: this.localProxy.username,
-            password: this.localProxy.password,
-          }),
-        };
-      }
-    }
+    await this.loadProxy();
+    const options = await this.resolveProxyOptions();
 
     const socketConfig: UserFacingSocketConfig = {
       ...options,
@@ -654,7 +815,7 @@ export class BaileysStartupService extends ChannelStartupService {
       fireInitQueries: true,
       connectTimeoutMs: 30_000,
       keepAliveIntervalMs: 30_000,
-      qrTimeout: 45_000,
+      qrTimeout: 75_000,
       emitOwnEvents: false,
       shouldIgnoreJid: (jid) => {
         if (this.localSettings.syncFullHistory && isJidGroup(jid)) {

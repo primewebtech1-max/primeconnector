@@ -83,6 +83,14 @@ export class PortalRouter extends RouterBroker {
       return res.status(HttpStatus.OK).json(response);
     });
 
+    // Send WhatsApp Text Message (with auto +91 Indian format)
+    this.router.post('/api/message/send', portalAuthGuard, async (req: Request, res: Response) => {
+      const portalUser = (req as any).portalUser as PortalUserPayload;
+      const { number, text } = req.body || {};
+      const response = await userController.sendUserMessage(portalUser.userId, { number, text });
+      return res.status(HttpStatus.OK).json(response);
+    });
+
     // ----------------------------------------------------
     // Serve Portal Web UI
     // ----------------------------------------------------
@@ -99,6 +107,10 @@ export class PortalRouter extends RouterBroker {
 
     this.router.get('/dashboard', (_req: Request, res: Response) => {
       res.sendFile(path.join(portalStaticPath, 'dashboard.html'));
+    });
+
+    this.router.get('/admin', (_req: Request, res: Response) => {
+      res.sendFile(path.join(portalStaticPath, 'admin.html'));
     });
   }
 }

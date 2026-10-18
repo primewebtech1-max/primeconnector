@@ -11,7 +11,33 @@ export class AdminUserRouter extends RouterBroker {
     super();
 
     this.router
-      // Create a new user with name, email, password
+      // Verify Master Admin Password / API Key
+      .post('/verify', async (req, res) => {
+        const key = req.headers['apikey'] || req.body?.apiKey || req.body?.password;
+        const globalKey = process.env.AUTHENTICATION_API_KEY;
+        const adminPass = process.env.ADMIN_PASSWORD || globalKey;
+
+        if (!key || (key !== globalKey && key !== adminPass)) {
+          return res.status(HttpStatus.UNAUTHORIZED).json({
+            status: HttpStatus.UNAUTHORIZED,
+            valid: false,
+            message: 'Invalid Master Admin Password or API Key',
+          });
+        }
+
+        return res.status(HttpStatus.OK).json({
+          status: HttpStatus.OK,
+          valid: true,
+          apiKey: globalKey,
+        });
+      })
+      // Reset user password with custom password or auto-generated unique password
+      .post('/:id/reset-password', ...guards, async (req, res) => {
+        const { password } = req.body || {};
+        const response = await userController.resetPassword(req.params.id, password);
+        return res.status(HttpStatus.OK).json(response);
+      })
+      // Create a new user with name, email, password (optional, falls back to .env)
       .post('/create', ...guards, async (req, res) => {
         const { name, email, password } = req.body;
         const response = await userController.createUser({ name, email, password });
